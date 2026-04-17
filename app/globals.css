@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-black: #000000;
+  --color-charcoal: #1a1a1a;
+  --color-dark-gray: #2a2a2a;
+  --color-medium-gray: #3a3a3a;
+  --color-light-gray: #4a4a4a;
+  --color-orange: #ff8c42;
+  --color-orange-dark: #e67e22;
+  --color-orange-light: #ffa566;
+  --color-neutral-100: #f0f0f0;
+  --color-neutral-50: #f9f9f9;
+  
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: theme('color.white');
+  color: theme('color.black');
+  font-weight: 400;
 }
+
+/* Custom Utilities for Premium Look */
+.text-balance {
+  text-wrap: balance;
+}
+
+.luxury-transition {
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+}
+
+.orange-accent {
+  color: #ff8c42;
+}
+
+.orange-accent-bg {
+  background-color: #ff8c42;
+}
+
+.orange-accent-border {
+  border-color: #ff8c42;
+}
+
+.black-base {
+  background-color: #000000;
+}
+
+.smooth-hover {
+  transition: all 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+
