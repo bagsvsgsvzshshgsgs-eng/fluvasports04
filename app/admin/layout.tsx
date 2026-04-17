@@ -54,12 +54,12 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-black font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-orange-500 text-white flex flex-col fixed h-full shadow-2xl z-20">
-        <div className="p-8 border-b border-white/5">
+      <aside className="w-64 bg-black text-white flex flex-col fixed h-full shadow-2xl z-20 border-r border-gray-900">
+        <div className="p-8 border-b border-gray-900">
           <Link href="/admin" className="text-xl font-serif tracking-widest font-bold block mb-1">
-            FLUVA <span className="text-gray-500">ADMIN</span>
+            FLUVA <span className="text-orange-500">ADMIN</span>
           </Link>
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Internal Management</p>
+          <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">Internal Management</p>
         </div>
         
         <nav className="flex-1 px-4 py-8 space-y-2">
@@ -69,20 +69,20 @@ export default function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`flex items-center gap-4 px-4 py-3 text-sm font-medium transition-all duration-300 ${
                   isActive 
-                    ? "bg-black/10 text-white shadow-inner" 
-                    : "text-gray-500 hover:text-white hover:bg-black/5"
+                    ? "bg-gray-900/50 text-orange-500 border-l-2 border-orange-500" 
+                    : "text-gray-500 hover:text-white hover:bg-gray-900/30"
                 }`}
               >
-                <span className="text-base grayscale group-hover:grayscale-0">{item.icon}</span>
+                <span className={`text-base ${isActive ? '' : 'grayscale opacity-50'}`}>{item.icon}</span>
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 space-y-2 bg-black/20 border-t border-white/5">
+        <div className="p-4 space-y-2 bg-black border-t border-gray-900">
           <Link href="/" className="flex items-center gap-4 px-4 py-3 text-xs text-gray-500 hover:text-white transition-all uppercase tracking-widest font-medium">
             <span>🏠</span>
             Storefront
@@ -94,7 +94,7 @@ export default function AdminLayout({
                 router.push("/admin/login");
               }
             }}
-            className="w-full flex items-center gap-4 px-4 py-3 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all rounded-lg uppercase tracking-widest font-bold"
+            className="w-full flex items-center gap-4 px-4 py-3 text-xs text-red-900 hover:text-red-500 transition-all rounded-lg uppercase tracking-widest font-bold"
           >
             <span>🔐</span>
             Logout

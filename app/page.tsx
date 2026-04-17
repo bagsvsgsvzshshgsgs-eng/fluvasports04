@@ -18,7 +18,7 @@ export default function Home() {
       <Navbar />
       <main>
         {/* Banner */}
-        <div className="bg-sand py-2 text-center text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400 border-b border-gray-800">
+        <div className="bg-black py-2 text-center text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400 border-b border-gray-800">
           {settings.promoBannerText}
         </div>
 
@@ -43,6 +43,20 @@ export default function Home() {
               <p className="text-lg md:text-xl text-gray-400 font-light mb-12 max-w-lg leading-relaxed text-balance">
                 {settings.heroSubtitle}
               </p>
+              <div className="flex gap-4">
+                <Link
+                  href="/shop"
+                  className="bg-orange-500 text-black px-10 py-4 text-xs uppercase tracking-widest font-bold hover:bg-orange-600 transition-all shadow-xl hover-lift"
+                >
+                  Shop the Collection
+                </Link>
+                <Link
+                  href="/shop?filter=New"
+                  className="border border-white text-white px-10 py-4 text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-all hover-lift"
+                >
+                  Explore New
+                </Link>
+              </div>
             </div>
           </div>
         </section>

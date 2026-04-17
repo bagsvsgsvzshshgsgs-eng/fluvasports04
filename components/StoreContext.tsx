@@ -109,10 +109,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<SiteSettings>({
 
     announcementText: "Free worldwide shipping on all orders over $250",
-    heroTitle: "The Essence of Summer Luxury",
-    heroSubtitle: "Discover the new 2026 collection of meticulously crafted swimwear.",
+    heroTitle: "The Signature Mediterranean Edit",
+    heroSubtitle: "Transforming the resort wardrobe with sustainable, contemporary elegance.",
     heroImage: "/images/fluva-hero.jpeg",
-    promoBannerText: "Limited Edition: The Mediterranean Collection has arrived. Shop now.",
+    promoBannerText: "Free Express Shipping on All Global Orders for a Limited Time",
     categoryImages: {
       onePiece: "/images/category_one_piece_1776081471457.png",
       bikini: "/images/category_bikini_1776081526337.png",

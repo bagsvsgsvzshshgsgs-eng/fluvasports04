@@ -17,8 +17,8 @@
 }
 
 body {
-  background-color: theme('color.white');
-  color: theme('color.black');
+  background-color: #000000;
+  color: #ffffff;
   font-weight: 400;
 }
 

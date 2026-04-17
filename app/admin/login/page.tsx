@@ -63,14 +63,14 @@ export default function AdminLoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-b border-gray-800 px-0 py-4 text-sm focus:outline-none focus:border-orange-500 transition-all placeholder:text-gray-300"
+              className="w-full border-b border-gray-800 px-0 py-4 text-sm focus:outline-none focus:border-orange-500 transition-all placeholder:text-gray-600 bg-transparent text-white"
             />
           </div>
           
           <div className="pt-4">
             <button 
               type="submit"
-              className="w-full bg-orange-500 text-white py-5 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-gray-800 transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full bg-orange-500 text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-white transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0"
             >
               Authorize Session
             </button>
