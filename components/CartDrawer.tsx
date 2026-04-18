@@ -94,7 +94,7 @@ export default function CartDrawer() {
           <div className="p-6 bg-black border-t border-gray-800">
             <div className="flex justify-between items-center mb-6">
               <span className="text-gray-400 font-light tracking-wide">Subtotal</span>
-              <span className="text-lg font-medium text-white">${subtotal}</span>
+              <span className="text-lg font-medium text-white">EGP {subtotal}</span>
             </div>
             <p className="text-xs text-gray-400 mb-6 font-light">
               Taxes and shipping calculated at checkout.

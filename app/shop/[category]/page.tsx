@@ -15,17 +15,16 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const { category } = use(params);
 
 
-  // Map URL category to product category string
   let productCategory = "";
   let pageTitle = "";
   if (category === "bikinis" || category === "bikini") {
-    productCategory = "Bikini";
+    productCategory = "Bikinis";
     pageTitle = "Bikinis";
   } else if (category === "one-piece") {
-    productCategory = "One Piece";
+    productCategory = "One Pieces";
     pageTitle = "One Pieces";
   } else if (category === "resort") {
-    productCategory = "Resort Wear";
+    productCategory = "Resortwear";
     pageTitle = "Resort Wear";
   } else {
     notFound();

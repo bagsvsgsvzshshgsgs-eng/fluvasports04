@@ -1,8 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useStore } from "@/components/StoreContext";
 
 export default function SuccessPage() {
+  const { orders } = useStore();
+  const recentOrderId = orders.length > 0 ? orders[0].id : "FLV-82937-2910";
+
   return (
     <>
       <Navbar />
@@ -24,7 +30,7 @@ export default function SuccessPage() {
           <div className="space-y-4">
             <div className="p-6 bg-gray-900 border border-gray-800 mb-8 inline-block w-full">
               <p className="text-sm uppercase tracking-widest text-gray-500 mb-2">Order Number</p>
-              <p className="text-xl font-medium text-white">#FLV-82937-2910</p>
+              <p className="text-xl font-medium text-white">#{recentOrderId.replace(/^#/, '')}</p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

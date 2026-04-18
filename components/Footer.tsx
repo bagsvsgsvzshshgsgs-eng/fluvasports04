@@ -30,7 +30,6 @@ export default function Footer() {
             <li><Link href="#faq" className="hover:text-orange-500 transition-colors duration-300">FAQ</Link></li>
             <li><Link href="#shipping" className="hover:text-orange-500 transition-colors duration-300">Shipping & Returns</Link></li>
             <li><Link href="#size" className="hover:text-orange-500 transition-colors duration-300">Size Guide</Link></li>
-            <li><Link href="/admin" className="hover:text-orange-500 transition-colors duration-300 font-medium">Admin Portal</Link></li>
           </ul>
         </div>
 

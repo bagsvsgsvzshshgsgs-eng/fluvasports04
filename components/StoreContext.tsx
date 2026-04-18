@@ -23,6 +23,15 @@ type Order = {
   date: string;
 };
 
+type CategoryShowcaseItem = {
+  id: string;
+  title: string;
+  subtitle: string;
+  link: string;
+  accentColor: string;
+  productIds: string[];
+};
+
 type SiteSettings = {
   announcementText: string;
   heroTitle: string;
@@ -34,6 +43,7 @@ type SiteSettings = {
     bikini: string;
     resort: string;
   };
+  categoryShowcase: CategoryShowcaseItem[];
 };
 
 
@@ -96,7 +106,7 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   // State initialization
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -117,7 +127,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       onePiece: "/images/category_one_piece_1776081471457.png",
       bikini: "/images/category_bikini_1776081526337.png",
       resort: "/images/category_coverups_1776081563632.png",
-    }
+    },
+    categoryShowcase: [
+      {
+        id: "one-pieces",
+        title: "The One Piece",
+        subtitle: "Elevated silhouettes",
+        link: "/shop?filter=One+Pieces",
+        accentColor: "#c8a96e",
+        productIds: ["prod_4", "prod_5", "prod_1", "prod_2"],
+      },
+      {
+        id: "bikinis",
+        title: "Signature Bikinis",
+        subtitle: "Summer's finest",
+        link: "/shop?filter=Bikinis",
+        accentColor: "#e07b4a",
+        productIds: ["prod_2", "prod_1", "prod_3", "prod_5"],
+      },
+      {
+        id: "resort",
+        title: "Resort Cover-Ups",
+        subtitle: "Poolside to penthouse",
+        link: "/shop?filter=Cover-Ups",
+        accentColor: "#9ba89c",
+        productIds: ["prod_8", "prod_6", "prod_9", "prod_7"],
+      },
+    ],
   });
 
 
@@ -135,10 +171,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     if (savedProducts) {
       const parsed = JSON.parse(savedProducts);
-      if (parsed.length === initialProducts.length) {
+      // Force refresh if the saved products have '$' so that EGP prices apply
+      const hasDollarPrice = parsed.some((p: any) => p.priceStr && p.priceStr.includes('$'));
+      
+      if (parsed.length === initialProducts.length && !hasDollarPrice) {
         setProducts(parsed);
       } else {
-        // Force refresh from latest data source if lengths differ
+        // Force refresh from latest data source if lengths differ or currency migration needed
         setProducts(initialProducts);
         localStorage.setItem("flv_products", JSON.stringify(initialProducts));
       }
@@ -150,16 +189,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
     if (savedReviews) setReviews(JSON.parse(savedReviews));
     if (savedOrders) setOrders(JSON.parse(savedOrders));
-    if (savedAuth) setIsAdminLoggedIn(JSON.parse(savedAuth));
+    
+    if (savedAuth) {
+      // Force sign-out one time to require testing the new password
+      if (!localStorage.getItem("flv_pwd_reset_v1")) {
+        setIsAdminLoggedIn(false);
+        localStorage.setItem("flv_admin_auth", "false");
+        localStorage.setItem("flv_pwd_reset_v1", "true");
+      } else {
+        setIsAdminLoggedIn(JSON.parse(savedAuth));
+      }
+    }
+
     if (savedSettings) {
       const parsed = JSON.parse(savedSettings);
+      console.log("Loading settings from localStorage:", parsed);
+      
+      // Migration: Replace old Unsplash URLs with local hero image
+      if (parsed.heroImage && (parsed.heroImage.includes("unsplash.com") || parsed.heroImage.includes("placeholder"))) {
+        console.log("Performing migration for heroImage URL");
+        parsed.heroImage = "/images/fluva-hero.jpeg";
+      }
+
       setSettings(prev => ({
         ...prev,
         ...parsed,
         categoryImages: {
           ...prev.categoryImages,
-          ...(parsed.categoryImages || {})
-        }
+          ...(parsed.categoryImages || {}),
+        },
+        // Preserve defaults if old localStorage data is missing categoryShowcase
+        categoryShowcase: parsed.categoryShowcase ?? prev.categoryShowcase,
       }));
     }
 
@@ -180,7 +240,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Auth Logic
   const adminLogin = (email: string, pass: string) => {
-    if (email === "admin@fluvasport.com" && pass === "admin123") {
+    if (email === "goldenswimmingacademy@gmail.com" && pass === "wateryclone123") {
       setIsAdminLoggedIn(true);
       return true;
     }

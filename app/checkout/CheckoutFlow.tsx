@@ -30,7 +30,7 @@ export default function CheckoutFlow() {
     
     // Save order
     const newOrder = {
-      id: `ORD-${Math.floor(Math.random() * 90000) + 10000}`,
+      id: `FLV-${Math.floor(Math.random() * 90000) + 10000}-${Math.floor(Math.random() * 9000) + 1000}`,
       customerName: `${firstName} ${lastName}`,
       email: email,
       items: [...cartItems],
@@ -180,7 +180,7 @@ export default function CheckoutFlow() {
               </svg>
               Processing...
             </>
-          ) : `Pay Now — $${subtotal.toFixed(2)}`}
+          ) : `Pay Now — EGP ${subtotal.toFixed(2)}`}
         </button>
 
       </div>
@@ -235,7 +235,7 @@ export default function CheckoutFlow() {
         <div className="space-y-3 text-sm mb-6 pb-6 border-b border-gray-800">
           <div className="flex justify-between items-center text-gray-300">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>EGP {subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-gray-300">
             <span>Shipping</span>
@@ -254,8 +254,8 @@ export default function CheckoutFlow() {
         <div className="flex justify-between items-end">
           <span className="font-medium text-white">Total</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">USD</span>
-            <span className="text-2xl font-medium text-white">${subtotal.toFixed(2)}</span>
+            <span className="text-xs text-gray-400 uppercase tracking-wider">EGP</span>
+            <span className="text-2xl font-medium text-white">EGP {subtotal.toFixed(2)}</span>
           </div>
         </div>
       </div>

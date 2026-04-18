@@ -10,7 +10,7 @@ export default function AdminDashboard() {
   const recentOrders = orders.slice(0, 5);
 
   const stats = [
-    { label: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, change: "+12.5%", icon: "💰" },
+    { label: "Total Revenue", value: `EGP ${totalRevenue.toLocaleString()}`, change: "+12.5%", icon: "💰" },
     { label: "Total Orders", value: orders.length.toString(), change: "+8.2%", icon: "📦" },
     { label: "Inventory", value: products.length.toString(), change: "+0.4%", icon: "👙" },
     { label: "Active Customers", value: new Set(orders.map(o => o.email)).size.toString(), change: "+15.3%", icon: "👥" },
@@ -25,8 +25,8 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Welcome back, Administrator. Here's what's happening today.</p>
         </div>
         <div className="flex gap-4">
-          <button className="bg-black border border-gray-800 px-4 py-2 text-sm font-medium text-gray-400 hover:bg-black transition-colors">Download Report</button>
-          <button className="bg-orange-500 text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">Add New Product</button>
+          <Link href="/admin/orders" className="bg-black border border-gray-800 px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:border-gray-600 transition-colors">View Orders</Link>
+          <Link href="/admin/products" className="bg-orange-500 text-white px-4 py-2 text-sm font-medium hover:bg-orange-600 transition-colors shadow-sm">+ Add Product</Link>
         </div>
       </header>
 
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
       <div className="bg-black border border-gray-800 shadow-sm">
         <div className="p-6 border-b border-gray-800 flex justify-between items-center">
           <h2 className="text-lg font-serif text-white">Recent Orders</h2>
-          <button className="text-gray-400 text-sm hover:underline">View All Orders</button>
+          <Link href="/admin/orders" className="text-gray-400 text-sm hover:text-white transition-colors">View All Orders →</Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-400">{order.date}</td>
-                    <td className="px-6 py-4 font-medium text-white">${order.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-medium text-white">EGP {order.total.toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold ${
                         order.status === 'Delivered' ? 'bg-green-100 text-green-700' :

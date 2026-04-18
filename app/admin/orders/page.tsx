@@ -64,7 +64,7 @@ export default function AdminOrders() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-400">{order.date}</td>
-                    <td className="px-6 py-4 font-medium text-white">${order.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-medium text-white">EGP {order.total.toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 text-[11px] uppercase tracking-wider font-bold rounded-full ${getStatusColor(order.status)}`}>
                         {order.status}

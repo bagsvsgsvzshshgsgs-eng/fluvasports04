@@ -24,7 +24,7 @@ export default function ProductCard({ product, index }: { product: Product, inde
     <div className={`group relative block animate-fade-in-up ${staggerClass}`}>
 
       {/* Product Image & Overlays */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-black mb-6">
+      <div className="w-full mb-6">
         {product.isNew && (
           <span className="absolute top-4 left-4 z-10 bg-orange-500 px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold text-black shadow-lg">
             New Arrival
@@ -47,7 +47,11 @@ export default function ProductCard({ product, index }: { product: Product, inde
           <svg width="18" height="18" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
         </button>
 
-        <Link href={`/product/${product.id}`}>
+        <Link 
+          href={`/product/${product.id}`} 
+          className="relative block aspect-[3/4] w-full overflow-hidden bg-black" 
+          style={{ position: 'relative' }}
+        >
           <Image
             src={product.image}
             alt={product.name}

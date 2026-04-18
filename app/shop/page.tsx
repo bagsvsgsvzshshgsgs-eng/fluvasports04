@@ -15,10 +15,10 @@ function ShopContent() {
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get("filter") || "All";
   
-  // Using products from context natively.
+  const isTopLevelGroup = ["Swimwear", "Apparel", "Accessories", "Lifestyle", "All"].includes(initialFilter);
 
-  const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [activeGroup, setActiveGroup] = useState<string>(initialFilter);
+  const [activeGroup, setActiveGroup] = useState<string>(isTopLevelGroup ? initialFilter : "All");
+  const [activeCategory, setActiveCategory] = useState<string>(!isTopLevelGroup ? initialFilter : "All");
   const [sortOption, setSortOption] = useState<string>("featured");
 
   const categoryGroups: Record<string, string[]> = {

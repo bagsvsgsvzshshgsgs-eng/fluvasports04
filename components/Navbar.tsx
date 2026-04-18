@@ -4,12 +4,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useStore } from "./StoreContext";
 import SearchOverlay from "./SearchOverlay";
-import AccountOverlay from "./AccountOverlay";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { setIsCartOpen, cartCount, setIsWishlistOpen, wishlist } = useStore();
 
 
@@ -61,14 +59,13 @@ export default function Navbar() {
                 </span>
               )}
             </button>
-            <button 
-              onClick={() => setIsAccountOpen(true)}
-
+            <Link 
+              href="/admin"
               className="text-white hover:text-orange-500 transition-colors duration-300" 
-              aria-label="Account"
+              aria-label="Admin"
             >
               <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            </button>
+            </Link>
             <button 
               onClick={() => setIsCartOpen(true)} 
               className="text-white hover:text-orange-500 transition-colors duration-300 relative" 
@@ -87,7 +84,6 @@ export default function Navbar() {
       </nav>
 
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <AccountOverlay isOpen={isAccountOpen} onClose={() => setIsAccountOpen(false)} />
     </>
   );
 }
