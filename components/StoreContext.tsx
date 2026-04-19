@@ -41,6 +41,8 @@ type SiteSettings = {
   categoryImages: {
     onePiece: string;
     bikini: string;
+    resort: string;
+  };
   categoryShowcase: CategoryShowcaseItem[];
   adminEmail?: string;
   adminPassword?: string;
