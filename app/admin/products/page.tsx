@@ -337,7 +337,7 @@ export default function AdminProducts() {
                       step={1}
                       value={priceInput}
                       onChange={(e) => setPriceInput(e.target.value)}
-                      className="w-full bg-black border border-gray-800 text-white pl-8 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500"
+                      className="w-full bg-black border border-gray-800 text-white pl-14 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500"
                       placeholder="0"
                     />
                   </div>
