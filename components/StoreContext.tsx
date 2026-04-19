@@ -41,9 +41,9 @@ type SiteSettings = {
   categoryImages: {
     onePiece: string;
     bikini: string;
-    resort: string;
-  };
   categoryShowcase: CategoryShowcaseItem[];
+  adminEmail?: string;
+  adminPassword?: string;
 };
 
 
@@ -154,6 +154,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         productIds: ["prod_8", "prod_6", "prod_9", "prod_7"],
       },
     ],
+    adminEmail: "goldenswimmingacademy@gmail.com",
+    adminPassword: "wateryclone123",
   });
 
 
@@ -240,7 +242,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Auth Logic
   const adminLogin = (email: string, pass: string) => {
-    if (email === "goldenswimmingacademy@gmail.com" && pass === "wateryclone123") {
+    const validEmail = settings.adminEmail || "goldenswimmingacademy@gmail.com";
+    const validPass = settings.adminPassword || "wateryclone123";
+    if (email === validEmail && pass === validPass) {
       setIsAdminLoggedIn(true);
       return true;
     }

@@ -146,6 +146,35 @@ export default function AdminSettings() {
           </div>
         </div>
 
+        <div className="bg-black border border-gray-800 shadow-sm col-span-1 md:col-span-2">
+          <div className="p-6 border-b border-gray-800 bg-black/30">
+            <h2 className="text-lg font-serif text-white">Security & Access</h2>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest text-red-400 font-bold">Admin Email</label>
+              <input 
+                type="email" 
+                value={settings.adminEmail || ""}
+                onChange={e => updateSettings({ adminEmail: e.target.value })}
+                className="w-full border border-gray-800 px-4 py-3 text-sm focus:outline-none focus:border-red-500 bg-zinc-950 text-white" 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest text-red-400 font-bold">Admin Password</label>
+              <input 
+                type="text" 
+                value={settings.adminPassword || ""}
+                onChange={e => updateSettings({ adminPassword: e.target.value })}
+                className="w-full border border-gray-800 px-4 py-3 text-sm focus:outline-none focus:border-red-500 bg-zinc-950 text-white" 
+              />
+            </div>
+            <div className="col-span-1 flex items-start">
+              <p className="text-[10px] text-gray-500 italic">Warning: Changing these values will update your login credentials immediately.</p>
+            </div>
+          </div>
+        </div>
+
         <div className="col-span-1 md:col-span-2 flex justify-end pt-4">
           <button 
             type="submit"
