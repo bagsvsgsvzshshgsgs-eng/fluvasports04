@@ -32,18 +32,107 @@ type CategoryShowcaseItem = {
   productIds: string[];
 };
 
-type SiteSettings = {
+export type Role = 'SuperAdmin' | 'Editor';
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  status: 'Active' | 'Suspended';
+};
+
+export type Promotion = {
+  id: string;
+  type: 'PlanetWater' | 'Sale';
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  link: string;
+  isActive: boolean;
+};
+
+export type Discount = {
+  id: string;
+  code: string;
+  type: 'Percentage' | 'FixedAmount';
+  value: number;
+  isActive: boolean;
+  expiryDate?: string;
+};
+
+export type HeroBanner = {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  link: string;
+  isActive: boolean;
+  order: number;
+};
+
+export type SubCategory = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  banner: string;
+  seoTitle: string;
+  seoDescription: string;
+  isActive: boolean;
+  showOnHomepage: boolean;
+  order: number;
+  featuredProductIds: string[];
+  subcategories: SubCategory[];
+  type?: 'Standard' | 'BundleDeals' | 'Sale';
+};
+
+export type Bundle = {
+  id: string;
+  name: string;
+  description: string;
+  productIds: string[];
+  discountPercentage: number;
+  isActive: boolean;
+  image: string;
+};
+
+export type SaleSchedule = {
+  id: string;
+  categoryId: string;
+  startDate: string;
+  endDate: string;
+  discountPercentage: number;
+  isActive: boolean;
+};
+
+export type SiteSettings = {
   announcementText: string;
   heroTitle: string;
   heroSubtitle: string;
   heroImage: string;
+  heroBanners: HeroBanner[];
   promoBannerText: string;
+  promotions: Promotion[];
+  discounts: Discount[];
+  adminUsers: AdminUser[];
+  mediaLibrary: string[];
   categoryImages: {
     onePiece: string;
     bikini: string;
     resort: string;
   };
   categoryShowcase: CategoryShowcaseItem[];
+  categories: Category[];
+  bundles: Bundle[];
+  saleSchedules: SaleSchedule[];
   adminEmail?: string;
   adminPassword?: string;
 };
@@ -99,6 +188,7 @@ type StoreContextType = {
 
   // Authentication
   isAdminLoggedIn: boolean;
+  adminUser: AdminUser | null;
   adminLogin: (email: string, pass: string) => boolean;
   adminLogout: () => void;
 };
@@ -117,6 +207,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
 
   const [settings, setSettings] = useState<SiteSettings>({
 
@@ -124,7 +215,41 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     heroTitle: "The Signature Mediterranean Edit",
     heroSubtitle: "Transforming the resort wardrobe with sustainable, contemporary elegance.",
     heroImage: "/images/fluva-hero.jpeg",
+    heroBanners: [
+      {
+        id: "banner_1",
+        title: "The Signature Mediterranean Edit",
+        subtitle: "Transforming the resort wardrobe with sustainable, contemporary elegance.",
+        image: "/images/fluva-hero.jpeg",
+        link: "/shop",
+        isActive: true,
+        order: 1
+      }
+    ],
     promoBannerText: "Free Express Shipping on All Global Orders for a Limited Time",
+    promotions: [
+      {
+        id: "promo_pw",
+        type: "PlanetWater",
+        title: "PLANET WATER",
+        subtitle: "Sustainable Performance",
+        description: "Our new eco-inspired swimwear line crafted from recycled ocean plastics.",
+        image: "/images/category_coverups_1776081563632.png",
+        link: "/shop?filter=Eco",
+        isActive: true
+      }
+    ],
+    discounts: [],
+    adminUsers: [
+      {
+        id: "admin_1",
+        email: "goldenswimmingacademy@gmail.com",
+        name: "Super Admin",
+        role: "SuperAdmin",
+        status: "Active"
+      }
+    ],
+    mediaLibrary: [],
     categoryImages: {
       onePiece: "/images/category_one_piece_1776081471457.png",
       bikini: "/images/category_bikini_1776081526337.png",
@@ -156,6 +281,103 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         productIds: ["prod_8", "prod_6", "prod_9", "prod_7"],
       },
     ],
+    categories: [
+      {
+        id: "cat_women",
+        name: "Women",
+        slug: "women",
+        image: "/images/category_one_piece_1776081471457.png",
+        banner: "",
+        seoTitle: "Women's Luxury Swimwear",
+        seoDescription: "Shop our latest collection of premium women's swimwear.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 1,
+        featuredProductIds: [],
+        subcategories: [
+          { id: "sub_bikinis", name: "Bikinis", slug: "women/bikinis" },
+          { id: "sub_one_pieces", name: "One Pieces", slug: "women/one-pieces" }
+        ],
+        type: 'Standard'
+      },
+      {
+        id: "cat_men",
+        name: "Men",
+        slug: "men",
+        image: "/images/category_resortwear_1776341899337.png",
+        banner: "",
+        seoTitle: "Men's Swimwear",
+        seoDescription: "Premium men's swimwear and resort wear.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 2,
+        featuredProductIds: [],
+        subcategories: [],
+        type: 'Standard'
+      },
+      {
+        id: "cat_sale",
+        name: "Sale",
+        slug: "sale",
+        image: "",
+        banner: "",
+        seoTitle: "Sale & Clearance",
+        seoDescription: "Discounts on premium swimwear.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 3,
+        featuredProductIds: [],
+        subcategories: [],
+        type: 'Sale'
+      },
+      {
+        id: "cat_bundles",
+        name: "Bundle Deals",
+        slug: "bundles",
+        image: "",
+        banner: "",
+        seoTitle: "Exclusive Bundle Deals",
+        seoDescription: "Save more with our curated bundles.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 4,
+        featuredProductIds: [],
+        subcategories: [],
+        type: 'BundleDeals'
+      },
+      {
+        id: "cat_kids",
+        name: "Kids",
+        slug: "kids",
+        image: "/images/category_kids_1776342027791.png",
+        banner: "",
+        seoTitle: "Kids Swimwear",
+        seoDescription: "Premium swimwear for kids.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 5,
+        featuredProductIds: [],
+        subcategories: [],
+        type: 'Standard'
+      },
+      {
+        id: "cat_equipment",
+        name: "Equipment",
+        slug: "equipment",
+        image: "/images/category_pool_accessories_1776341916449.png",
+        banner: "",
+        seoTitle: "Swim Equipment",
+        seoDescription: "Professional and leisure swim equipment.",
+        isActive: true,
+        showOnHomepage: true,
+        order: 6,
+        featuredProductIds: [],
+        subcategories: [],
+        type: 'Standard'
+      }
+    ],
+    bundles: [],
+    saleSchedules: [],
     adminEmail: "goldenswimmingacademy@gmail.com",
     adminPassword: "wateryclone123",
   });
@@ -222,8 +444,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...prev.categoryImages,
           ...(parsed.categoryImages || {}),
         },
-        // Preserve defaults if old localStorage data is missing categoryShowcase
         categoryShowcase: parsed.categoryShowcase ?? prev.categoryShowcase,
+        heroBanners: parsed.heroBanners ?? prev.heroBanners,
+        promotions: parsed.promotions ?? prev.promotions,
+        discounts: parsed.discounts ?? prev.discounts,
+        adminUsers: parsed.adminUsers ?? prev.adminUsers,
+        mediaLibrary: parsed.mediaLibrary ?? prev.mediaLibrary,
+        categories: parsed.categories ?? prev.categories,
+        bundles: parsed.bundles ?? prev.bundles,
+        saleSchedules: parsed.saleSchedules ?? prev.saleSchedules,
       }));
     }
 
@@ -246,8 +475,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const adminLogin = (email: string, pass: string) => {
     const validEmail = settings.adminEmail || "goldenswimmingacademy@gmail.com";
     const validPass = settings.adminPassword || "wateryclone123";
-    if (email === validEmail && pass === validPass) {
+    
+    const user = settings.adminUsers?.find(u => u.email === email && u.status === 'Active');
+
+    if ((email === validEmail && pass === validPass) || (user && pass === validPass)) {
       setIsAdminLoggedIn(true);
+      setAdminUser(user || settings.adminUsers?.[0] || null);
       return true;
     }
     return false;
@@ -255,6 +488,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const adminLogout = () => {
     setIsAdminLoggedIn(false);
+    setAdminUser(null);
   };
 
   // Product Logic
@@ -335,7 +569,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       reviews, addReview, updateReviewStatus, deleteReview,
       orders, addOrder, updateOrderStatus,
       settings, updateSettings,
-      isAdminLoggedIn, adminLogin, adminLogout
+      isAdminLoggedIn, adminUser, adminLogin, adminLogout
     }}>
 
       {children}

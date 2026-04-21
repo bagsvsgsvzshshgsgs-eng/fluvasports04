@@ -9,6 +9,10 @@ export interface Product {
   sizes?: string[];
   isNew: boolean;
   category: string;
+  categoryId?: string;
+  subcategoryId?: string;
+  displayLocations?: string[];
+  badges?: string[];
   description: string;
   images: string[];
 }

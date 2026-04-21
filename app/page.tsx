@@ -7,54 +7,41 @@ import Footer from "@/components/Footer";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import FeaturedCategories from "@/components/FeaturedCategories";
 import BestSellers from "@/components/BestSellers";
-import { useStore } from "@/components/StoreContext";
-
 export default function Home() {
-  const { settings } = useStore();
 
   return (
     <>
       <AnnouncementBar />
       <Navbar />
       <main>
-        {/* Banner */}
-        <div className="bg-black py-2 text-center text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400 border-b border-gray-800">
-          {settings.promoBannerText}
-        </div>
 
         {/* Hero Section */}
-        <section className="relative h-[90vh] flex items-center overflow-hidden bg-gray-900">
+        <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
-              src={settings.heroImage}
-              alt="Luxury Swimwear"
+              src="/images/swimwear_hero_clean.png"
+              alt="Luxury Swimwear Campaign"
               fill
-              className="object-cover opacity-90 scale-105"
+              className="object-cover object-center"
               priority
             />
-
+            {/* Gradient overlay for better text readability on the left */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent"></div>
           </div>
-          <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 w-full py-24 md:py-32">
-            <div className="max-w-2xl animate-fade-in-up">
-              <span className="inline-block mb-6 text-xs uppercase tracking-[0.3em] text-gray-400 font-medium">New 2026 Collection</span>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[1.1] mb-8 text-balance">
-                {settings.heroTitle}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 w-full">
+            <div className="max-w-xl animate-fade-in-up">
+              <h1 className="text-5xl md:text-6xl lg:text-[72px] font-sans text-white font-bold leading-[1.05] tracking-tight uppercase mb-6">
+                NEW WATER &<br />SHOCKING PINK<br />LIMITED EDITIONS
               </h1>
-              <p className="text-lg md:text-xl text-gray-400 font-light mb-12 max-w-lg leading-relaxed text-balance">
-                {settings.heroSubtitle}
+              <p className="text-lg md:text-xl text-gray-200 font-light mb-10 max-w-md leading-relaxed">
+                Discover the ultimate performance and style with our newest elite swimwear collection.
               </p>
-              <div className="flex gap-4">
+              <div>
                 <Link
                   href="/shop"
-                  className="bg-orange-500 text-black px-10 py-4 text-xs uppercase tracking-widest font-bold hover:bg-orange-600 transition-all shadow-xl hover-lift"
+                  className="inline-block bg-blue-600 text-white px-10 py-4 rounded-full text-sm font-bold tracking-wide hover:bg-blue-700 transition-all shadow-xl hover:-translate-y-1 hover:shadow-blue-900/50"
                 >
-                  Shop the Collection
-                </Link>
-                <Link
-                  href="/shop?filter=New"
-                  className="border border-white text-white px-10 py-4 text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-all hover-lift"
-                >
-                  Explore New
+                  Discover now
                 </Link>
               </div>
             </div>

@@ -28,11 +28,13 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-          <div className="hidden md:flex gap-8 text-sm uppercase tracking-widest text-gray-400 font-medium">
-            <Link href="/shop?filter=Swimwear" className="hover:text-orange-500 transition-all duration-300 hover:tracking-wider">Swimwear</Link>
-            <Link href="/shop?filter=Apparel" className="hover:text-orange-500 transition-all duration-300 hover:tracking-wider">Apparel</Link>
-            <Link href="/shop?filter=Accessories" className="hover:text-orange-500 transition-all duration-300 hover:tracking-wider">Accessories</Link>
-            <Link href="/shop?filter=Lifestyle" className="hover:text-orange-500 transition-all duration-300 hover:tracking-wider">Pool Lifestyle</Link>
+          <div className="hidden lg:flex gap-8 text-xs uppercase tracking-[0.15em] text-gray-400 font-medium">
+            <Link href="/shop?filter=Women" className="hover:text-white transition-all duration-300">Women</Link>
+            <Link href="/shop?filter=Men" className="hover:text-white transition-all duration-300">Men</Link>
+            <Link href="/shop?filter=Kids" className="hover:text-white transition-all duration-300">Kids</Link>
+            <Link href="/shop?filter=Equipment" className="hover:text-white transition-all duration-300">Equipment</Link>
+            <Link href="/shop?filter=Bundle+Deals" className="hover:text-white transition-all duration-300">Bundle Deals</Link>
+            <Link href="/shop?filter=Sale" className="text-red-500 hover:text-red-400 transition-all duration-300">Sale</Link>
           </div>
 
           <Link href="/" className="text-3xl font-serif tracking-widest text-white font-bold hover:text-orange-500 transition-colors duration-300">
@@ -46,18 +48,6 @@ export default function Navbar() {
               aria-label="Search"
             >
               <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </button>
-            <button 
-              onClick={() => setIsWishlistOpen(true)}
-              className="text-white hover:text-orange-500 transition-colors duration-300 relative" 
-              aria-label="Wishlist"
-            >
-              <svg width="20" height="20" fill={wishlist.length > 0 ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-              {wishlist.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-black text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">
-                  {wishlist.length}
-                </span>
-              )}
             </button>
             <Link 
               href="/admin"
