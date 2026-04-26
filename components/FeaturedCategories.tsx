@@ -83,7 +83,7 @@ const CATEGORIES: Category[] = [
     label: "Planet Water",
     sublabel: "Sustainable by Design",
     href: "/shop?filter=Planet+Water",
-    image: null, // quota failed — using gradient
+    image: "/images/planet_water_banner.png",
     gradient: "from-teal-900 via-emerald-800 to-cyan-900",
     accentColor: "#2dd4bf",
     span: "wide",

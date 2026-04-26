@@ -16,13 +16,13 @@ export default function Home() {
       <main>
 
         {/* Hero Section */}
-        <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
+        <section className="relative w-full aspect-[4/5] sm:aspect-[4/3] md:aspect-video lg:aspect-[21/9] flex items-center overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/swimwear_hero_clean.png"
               alt="Luxury Swimwear Campaign"
               fill
-              className="object-cover object-center"
+              className="object-cover object-[center_15%]"
               priority
             />
             {/* Gradient overlay for better text readability on the left */}

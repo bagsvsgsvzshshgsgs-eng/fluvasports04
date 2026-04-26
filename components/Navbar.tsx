@@ -35,6 +35,7 @@ export default function Navbar() {
             <Link href="/shop?filter=Equipment" className="hover:text-white transition-all duration-300">Equipment</Link>
             <Link href="/shop?filter=Bundle+Deals" className="hover:text-white transition-all duration-300">Bundle Deals</Link>
             <Link href="/shop?filter=Sale" className="text-red-500 hover:text-red-400 transition-all duration-300">Sale</Link>
+            <Link href="/contact" className="hover:text-white transition-all duration-300">Contact Us</Link>
           </div>
 
           <Link href="/" className="text-3xl font-serif tracking-widest text-white font-bold hover:text-orange-500 transition-colors duration-300">
