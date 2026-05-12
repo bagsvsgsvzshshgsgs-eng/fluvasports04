@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useStore } from "@/components/StoreContext";
 import { Product } from "@/lib/data";
 import { Search, Plus, Edit2, Trash2, X, Filter, CheckSquare, Settings2, Tag } from "lucide-react";
@@ -48,6 +49,9 @@ export default function AdminProducts() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   // Filters
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -370,9 +374,9 @@ export default function AdminProducts() {
       </div>
 
       {/* ── Product Edit Modal ─────────────────────────────────────────────── */}
-      {isModalOpen && (
+      {isModalOpen && mounted && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 overflow-y-auto"
+          className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-10 overflow-y-auto"
           style={{ backgroundColor: "rgba(0,0,0,0.82)" }}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
@@ -440,13 +444,93 @@ export default function AdminProducts() {
                 </div>
 
                 <div className="space-y-3 pt-4">
-                  <label className="text-xs uppercase tracking-widest text-gray-400 font-medium">Image URL</label>
-                  <input
-                    type="text"
-                    value={form.image}
-                    onChange={(e) => set("image", e.target.value)}
-                    className="w-full bg-black border border-gray-800 text-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 rounded-md"
-                  />
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs uppercase tracking-widest text-gray-400 font-medium">Images</label>
+                    <button type="button" onClick={() => set("images", [...(form.images || []), ""])} className="text-xs text-orange-500 hover:text-orange-400 flex items-center gap-1">
+                      <Plus size={12} /> Add Image
+                    </button>
+                  </div>
+                  {(!form.images || form.images.length === 0) && (
+                    <input
+                      type="text"
+                      value={form.image}
+                      onChange={(e) => {
+                        set("image", e.target.value);
+                        set("images", [e.target.value]);
+                      }}
+                      placeholder="Primary Image URL"
+                      className="w-full bg-black border border-gray-800 text-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 rounded-md"
+                    />
+                  )}
+                  {(form.images || []).map((img, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={img}
+                        onChange={(e) => {
+                          const newImages = [...(form.images || [])];
+                          newImages[idx] = e.target.value;
+                          set("images", newImages);
+                          if (idx === 0) set("image", e.target.value); // Sync primary image
+                        }}
+                        placeholder="Image URL"
+                        className="flex-1 bg-black border border-gray-800 text-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 rounded-md"
+                      />
+                      <button type="button" onClick={() => {
+                        const newImages = (form.images || []).filter((_, i) => i !== idx);
+                        set("images", newImages);
+                        if (idx === 0 && newImages.length > 0) set("image", newImages[0]);
+                      }} className="p-2 text-gray-500 hover:text-red-500">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-3 pt-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs uppercase tracking-widest text-gray-400 font-medium">Colors</label>
+                    <button type="button" onClick={() => {
+                      set("colors", [...(form.colors || []), ""]);
+                      set("colorNames", [...(form.colorNames || []), ""]);
+                    }} className="text-xs text-orange-500 hover:text-orange-400 flex items-center gap-1">
+                      <Plus size={12} /> Add Color
+                    </button>
+                  </div>
+                  {(form.colors || []).map((color, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={form.colorNames?.[idx] || ""}
+                        onChange={(e) => {
+                          const newNames = [...(form.colorNames || [])];
+                          newNames[idx] = e.target.value;
+                          set("colorNames", newNames);
+                        }}
+                        placeholder="Name (e.g. Noir)"
+                        className="w-1/2 bg-black border border-gray-800 text-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 rounded-md"
+                      />
+                      <input
+                        type="text"
+                        value={color}
+                        onChange={(e) => {
+                          const newColors = [...(form.colors || [])];
+                          newColors[idx] = e.target.value;
+                          set("colors", newColors);
+                        }}
+                        placeholder="Class (e.g. bg-stone-900)"
+                        className="w-1/2 bg-black border border-gray-800 text-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 rounded-md"
+                      />
+                      <button type="button" onClick={() => {
+                        const newColors = (form.colors || []).filter((_, i) => i !== idx);
+                        const newNames = (form.colorNames || []).filter((_, i) => i !== idx);
+                        set("colors", newColors);
+                        set("colorNames", newNames);
+                      }} className="p-2 text-gray-500 hover:text-red-500">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -547,12 +631,13 @@ export default function AdminProducts() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Bulk Category Assignment Modal */}
-      {isBulkCategoryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+      {isBulkCategoryModalOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80">
           <div className="bg-zinc-950 border border-gray-800 w-full max-w-sm rounded-xl overflow-hidden p-6">
             <h3 className="text-lg font-serif text-white mb-4">Bulk Category Assign</h3>
             <p className="text-sm text-gray-400 mb-4">Select the destination category for {selectedIds.size} products.</p>
@@ -580,7 +665,8 @@ export default function AdminProducts() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

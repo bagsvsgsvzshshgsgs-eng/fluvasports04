@@ -32,6 +32,14 @@ type CategoryShowcaseItem = {
   productIds: string[];
 };
 
+export type ActivityLog = {
+  id: string;
+  action: string;
+  user: string;
+  timestamp: string;
+  category: 'product' | 'order' | 'review' | 'settings' | 'user' | 'system';
+};
+
 export type Role = 'SuperAdmin' | 'Editor';
 
 export type AdminUser = {
@@ -114,6 +122,7 @@ export type SaleSchedule = {
 };
 
 export type SiteSettings = {
+  // Content
   announcementText: string;
   heroTitle: string;
   heroSubtitle: string;
@@ -135,6 +144,29 @@ export type SiteSettings = {
   saleSchedules: SaleSchedule[];
   adminEmail?: string;
   adminPassword?: string;
+  // Site Identity
+  siteName: string;
+  siteTagline: string;
+  contactEmail: string;
+  contactPhone: string;
+  storeAddress: string;
+  logoUrl: string;
+  // Social Media
+  socialLinks: {
+    instagram: string;
+    facebook: string;
+    tiktok: string;
+    whatsapp: string;
+  };
+  // Global SEO
+  seoMetaTitle: string;
+  seoMetaDescription: string;
+  seoOgImage: string;
+  // Theme
+  primaryColor: string;
+  fontFamily: string;
+  // System
+  maintenanceMode: boolean;
 };
 
 
@@ -166,7 +198,7 @@ type StoreContextType = {
   setIsCartOpen: (open: boolean) => void;
 
   // Wishlist
-  wishlist: string[]; // Array of product IDs
+  wishlist: string[];
   toggleWishlist: (productId: string) => void;
   isWishlistOpen: boolean;
   setIsWishlistOpen: (open: boolean) => void;
@@ -186,6 +218,11 @@ type StoreContextType = {
   settings: SiteSettings;
   updateSettings: (settings: Partial<SiteSettings>) => void;
 
+  // Activity Logs
+  activityLogs: ActivityLog[];
+  addLog: (action: string, category: ActivityLog['category']) => void;
+  clearLogs: () => void;
+
   // Authentication
   isAdminLoggedIn: boolean;
   adminUser: AdminUser | null;
@@ -203,11 +240,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
   
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+
+  // Activity log helper (defined before settings to avoid TDZ issues)
+  const addLog = (action: string, category: ActivityLog['category']) => {
+    const user = adminUser?.name || 'System';
+    const newLog: ActivityLog = {
+      id: `log_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      action,
+      user,
+      timestamp: new Date().toISOString(),
+      category,
+    };
+    setActivityLogs(prev => [newLog, ...prev].slice(0, 500)); // cap at 500
+  };
+
+  const clearLogs = () => {
+    setActivityLogs([]);
+    localStorage.removeItem('flv_logs');
+  };
 
   const [settings, setSettings] = useState<SiteSettings>({
 
@@ -243,7 +299,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     adminUsers: [
       {
         id: "admin_1",
-        email: "goldenswimmingacademy@gmail.com",
+        email: "Fluvasport@gmail.com",
         name: "Super Admin",
         role: "SuperAdmin",
         status: "Active"
@@ -378,8 +434,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ],
     bundles: [],
     saleSchedules: [],
-    adminEmail: "goldenswimmingacademy@gmail.com",
+    adminEmail: "Fluvasport@gmail.com",
     adminPassword: "wateryclone123",
+    // Site Identity
+    siteName: "Fluva Sport",
+    siteTagline: "Mediterranean Luxury Swimwear",
+    contactEmail: "Fluvasport@gmail.com",
+    contactPhone: "01140377799",
+    storeAddress: "El Bashayer, Cairo, Egypt",
+    logoUrl: "",
+    // Social Media
+    socialLinks: {
+      instagram: "https://instagram.com/fluvasport",
+      facebook: "https://facebook.com/fluvasport",
+      tiktok: "https://tiktok.com/@fluvasport",
+      whatsapp: "https://wa.me/201000000000",
+    },
+    // Global SEO
+    seoMetaTitle: "Fluva Sport — Mediterranean Luxury Swimwear",
+    seoMetaDescription: "Discover premium, sustainable swimwear crafted in the spirit of the Mediterranean. Shop the latest collections at Fluva Sport.",
+    seoOgImage: "/images/fluva-hero.jpeg",
+    // Theme
+    primaryColor: "#f97316",
+    fontFamily: "Inter",
+    // System
+    maintenanceMode: false,
   });
 
 
@@ -394,22 +473,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const savedOrders = localStorage.getItem("flv_orders");
     const savedSettings = localStorage.getItem("flv_settings");
     const savedAuth = localStorage.getItem("flv_admin_auth");
+    const savedLogs = localStorage.getItem("flv_logs");
+    if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
 
-    if (savedProducts) {
-      const parsed = JSON.parse(savedProducts);
-      // Force refresh if the saved products have '$' so that EGP prices apply
-      const hasDollarPrice = parsed.some((p: any) => p.priceStr && p.priceStr.includes('$'));
-      
-      if (parsed.length === initialProducts.length && !hasDollarPrice) {
-        setProducts(parsed);
-      } else {
-        // Force refresh from latest data source if lengths differ or currency migration needed
-        setProducts(initialProducts);
-        localStorage.setItem("flv_products", JSON.stringify(initialProducts));
-      }
-    } else {
-      setProducts(initialProducts);
-    }
+    // Always sync products from source code to avoid cached issues during development
+    setProducts(initialProducts);
+    localStorage.setItem("flv_products", JSON.stringify(initialProducts));
 
     if (savedCart) setCartItems(JSON.parse(savedCart));
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
@@ -418,10 +487,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     
     if (savedAuth) {
       // Force sign-out one time to require testing the new password
-      if (!localStorage.getItem("flv_pwd_reset_v1")) {
+      if (!localStorage.getItem("flv_pwd_reset_v2")) {
         setIsAdminLoggedIn(false);
         localStorage.setItem("flv_admin_auth", "false");
-        localStorage.setItem("flv_pwd_reset_v1", "true");
+        localStorage.setItem("flv_pwd_reset_v2", "true");
       } else {
         setIsAdminLoggedIn(JSON.parse(savedAuth));
       }
@@ -453,6 +522,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         categories: parsed.categories ?? prev.categories,
         bundles: parsed.bundles ?? prev.bundles,
         saleSchedules: parsed.saleSchedules ?? prev.saleSchedules,
+        contactEmail: "Fluvasport@gmail.com",
+        contactPhone: "01140377799",
+        adminEmail: "Fluvasport@gmail.com",
       }));
     }
 
@@ -469,11 +541,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("flv_orders", JSON.stringify(orders));
     localStorage.setItem("flv_settings", JSON.stringify(settings));
     localStorage.setItem("flv_admin_auth", JSON.stringify(isAdminLoggedIn));
-  }, [products, cartItems, wishlist, reviews, orders, settings, isAdminLoggedIn, isLoaded]);
+    localStorage.setItem("flv_logs", JSON.stringify(activityLogs));
+  }, [products, cartItems, wishlist, reviews, orders, settings, isAdminLoggedIn, activityLogs, isLoaded]);
 
   // Auth Logic
   const adminLogin = (email: string, pass: string) => {
-    const validEmail = settings.adminEmail || "goldenswimmingacademy@gmail.com";
+    const validEmail = settings.adminEmail || "Fluvasport@gmail.com";
     const validPass = settings.adminPassword || "wateryclone123";
     
     const user = settings.adminUsers?.find(u => u.email === email && u.status === 'Active');
@@ -492,10 +565,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   // Product Logic
-
-  const addProduct = (p: Product) => setProducts(prev => [p, ...prev]);
-  const updateProduct = (p: Product) => setProducts(prev => prev.map(item => item.id === p.id ? p : item));
-  const deleteProduct = (id: string) => setProducts(prev => prev.filter(item => item.id !== id));
+  const addProduct = (p: Product) => {
+    setProducts(prev => [p, ...prev]);
+    addLog(`Added product: ${p.name}`, 'product');
+  };
+  const updateProduct = (p: Product) => {
+    setProducts(prev => prev.map(item => item.id === p.id ? p : item));
+    addLog(`Updated product: ${p.name}`, 'product');
+  };
+  const deleteProduct = (id: string) => {
+    const name = products.find(p => p.id === id)?.name || id;
+    setProducts(prev => prev.filter(item => item.id !== id));
+    addLog(`Deleted product: ${name}`, 'product');
+  };
 
   // Wishlist Logic
   const toggleWishlist = (productId: string) => {
@@ -518,8 +600,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
   const updateReviewStatus = (id: string, status: Review["status"]) => {
     setReviews(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+    addLog(`Review ${id} marked as ${status}`, 'review');
   };
-  const deleteReview = (id: string) => setReviews(prev => prev.filter(r => r.id !== id));
+  const deleteReview = (id: string) => {
+    setReviews(prev => prev.filter(r => r.id !== id));
+    addLog(`Deleted review ${id}`, 'review');
+  };
 
 
   // Cart Logic
@@ -551,14 +637,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   // Order Logic
-  const addOrder = (order: Order) => setOrders(prev => [order, ...prev]);
+  const addOrder = (order: Order) => {
+    setOrders(prev => [order, ...prev]);
+    addLog(`New order placed: ${order.id} by ${order.customerName}`, 'order');
+  };
   const updateOrderStatus = (id: string, status: Order["status"]) => {
     setOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
+    addLog(`Order ${id} status changed to ${status}`, 'order');
   };
 
   // Settings Logic
   const updateSettings = (newSettings: Partial<SiteSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
+    addLog(`Settings updated`, 'settings');
   };
 
   return (
@@ -569,6 +660,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       reviews, addReview, updateReviewStatus, deleteReview,
       orders, addOrder, updateOrderStatus,
       settings, updateSettings,
+      activityLogs, addLog, clearLogs,
       isAdminLoggedIn, adminUser, adminLogin, adminLogout
     }}>
 

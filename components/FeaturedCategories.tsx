@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "./LanguageContext";
+import { TranslationKey } from "@/lib/translations";
 
 type Category = {
   id: string;
-  label: string;
-  sublabel: string;
+  labelKey: TranslationKey;
+  sublabelKey: TranslationKey;
   href: string;
   image: string | null;
   gradient: string;
@@ -18,8 +20,8 @@ type Category = {
 const CATEGORIES: Category[] = [
   {
     id: "women",
-    label: "Women",
-    sublabel: "Competition & Style",
+    labelKey: "cat_women_label",
+    sublabelKey: "cat_women_sub",
     href: "/shop?filter=Women",
     image: "/images/category_bikini_1776081526337.png",
     gradient: "from-rose-900 via-pink-800 to-fuchsia-900",
@@ -29,8 +31,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "men",
-    label: "Men",
-    sublabel: "Performance Jammers",
+    labelKey: "cat_men_label",
+    sublabelKey: "cat_men_sub",
     href: "/shop?filter=Men",
     image: "/images/cat_men.png",
     gradient: "from-slate-900 via-blue-900 to-indigo-900",
@@ -39,8 +41,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "kids",
-    label: "Kids",
-    sublabel: "Fun & Colourful",
+    labelKey: "cat_kids_label",
+    sublabelKey: "cat_kids_sub",
     href: "/shop?filter=Kids",
     image: "/images/cat_kids.png",
     gradient: "from-sky-700 via-cyan-600 to-teal-700",
@@ -49,8 +51,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "equipment",
-    label: "Equipment",
-    sublabel: "Pro Training Gear",
+    labelKey: "cat_equipment_label",
+    sublabelKey: "cat_equipment_sub",
     href: "/shop?filter=Equipment",
     image: "/images/cat_equipment.png",
     gradient: "from-zinc-800 via-neutral-700 to-stone-800",
@@ -59,8 +61,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "bundle",
-    label: "Bundle Deals",
-    sublabel: "Save More Together",
+    labelKey: "cat_bundle_label",
+    sublabelKey: "cat_bundle_sub",
     href: "/shop?filter=Bundle+Deals",
     image: "/images/cat_bundle.png",
     gradient: "from-amber-900 via-orange-800 to-yellow-900",
@@ -69,8 +71,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "sale",
-    label: "Sale",
-    sublabel: "Up to 50% Off",
+    labelKey: "cat_sale_label",
+    sublabelKey: "cat_sale_sub",
     href: "/shop?filter=Sale",
     image: "/images/category_one_piece_1776081471457.png",
     gradient: "from-red-900 via-rose-800 to-orange-900",
@@ -80,8 +82,8 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "planet-water",
-    label: "Planet Water",
-    sublabel: "Sustainable by Design",
+    labelKey: "cat_planet_label",
+    sublabelKey: "cat_planet_sub",
     href: "/shop?filter=Planet+Water",
     image: "/images/planet_water_banner.png",
     gradient: "from-teal-900 via-emerald-800 to-cyan-900",
@@ -91,6 +93,7 @@ const CATEGORIES: Category[] = [
 ];
 
 function CategoryCard({ cat }: { cat: Category }) {
+  const { t } = useLanguage();
   return (
     <Link
       href={cat.href}
@@ -101,7 +104,7 @@ function CategoryCard({ cat }: { cat: Category }) {
       {cat.image ? (
         <Image
           src={cat.image}
-          alt={cat.label}
+          alt={t(cat.labelKey)}
           fill
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           style={{ objectPosition: cat.objectPosition ?? "center center" }}
@@ -119,28 +122,29 @@ function CategoryCard({ cat }: { cat: Category }) {
 
       {/* Top accent line */}
       <div
-        className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500"
+        className="absolute top-0 inset-x-0 h-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500"
         style={{ backgroundColor: cat.accentColor }}
       />
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-7 flex flex-col gap-1">
+      <div className="absolute bottom-0 inset-x-0 p-7 flex flex-col gap-1">
         <p
           className="text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-300"
           style={{ color: cat.accentColor }}
         >
-          {cat.sublabel}
+          {t(cat.sublabelKey)}
         </p>
         <h3 className="text-white font-bold text-3xl md:text-4xl uppercase tracking-tight leading-none">
-          {cat.label}
+          {t(cat.labelKey)}
         </h3>
 
         {/* Arrow CTA — slides in on hover */}
         <div className="flex items-center gap-2 mt-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
           <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white">
-            Shop Now
+            {t("cat_shop_now")}
           </span>
           <svg
+            className="rtl-flip"
             width="20"
             height="10"
             viewBox="0 0 20 10"
@@ -160,22 +164,22 @@ function CategoryCard({ cat }: { cat: Category }) {
 
       {/* Sale badge */}
       {cat.id === "sale" && (
-        <div className="absolute top-5 right-5 flex flex-col items-end gap-1">
+        <div className="absolute top-5 end-5 flex flex-col items-end gap-1">
           <span className="px-4 py-1.5 text-[11px] uppercase tracking-widest font-extrabold text-white rounded-full bg-red-600 shadow-lg shadow-red-900/60">
-            Up to 50% Off
+            {t("cat_sale_badge")}
           </span>
           <span className="px-3 py-1 text-[9px] uppercase tracking-widest font-semibold text-red-200 bg-black/60 rounded-full backdrop-blur-sm">
-            Limited Time
+            {t("cat_sale_limited")}
           </span>
         </div>
       )}
 
       {/* Planet Water eco badge */}
       {cat.id === "planet-water" && (
-        <div className="absolute top-5 right-5 px-3 py-1 border text-[10px] uppercase tracking-widest font-semibold rounded-full"
+        <div className="absolute top-5 end-5 px-3 py-1 border text-[10px] uppercase tracking-widest font-semibold rounded-full"
           style={{ borderColor: cat.accentColor, color: cat.accentColor }}
         >
-          🌊 Eco Collection
+          🌊 {t("cat_planet_eco")}
         </div>
       )}
     </Link>
@@ -183,6 +187,7 @@ function CategoryCard({ cat }: { cat: Category }) {
 }
 
 export default function FeaturedCategories() {
+  const { t } = useLanguage();
   const women = CATEGORIES.find((c) => c.id === "women")!;
   const rest = CATEGORIES.filter((c) => c.id !== "women");
 
@@ -201,13 +206,13 @@ export default function FeaturedCategories() {
         {/* Section Header */}
         <div className="text-center mb-14">
           <p className="text-xs uppercase tracking-[0.4em] text-gray-500 mb-3 font-medium">
-            Shop by Category
+            {t("cat_shop_by")}
           </p>
           <h2 className="font-bold text-4xl md:text-6xl text-white leading-none uppercase tracking-tight mb-4">
-            Find Your Sport
+            {t("cat_find_sport")}
           </h2>
           <p className="text-gray-400 font-light max-w-lg mx-auto text-base leading-relaxed">
-            Performance gear and fashion-forward designs, crafted for every swimmer.
+            {t("cat_desc")}
           </p>
         </div>
 

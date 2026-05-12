@@ -6,12 +6,13 @@ import Footer from "@/components/Footer";
 import AddToCartSection from "./AddToCartSection";
 import ReviewSection from "@/components/ReviewSection";
 import { useStore } from "@/components/StoreContext";
-
+import { useLanguage } from "@/components/LanguageContext";
 import { use } from "react";
 import { notFound } from "next/navigation";
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { products } = useStore();
+  const { t } = useLanguage();
   const { id } = use(params);
 
   const product = products.find((p) => p.id === id);
@@ -38,7 +39,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             {/* Product Info */}
             <div className="sticky top-24">
               <h1 className="text-3xl font-serif text-white mb-2">{product.name}</h1>
-              <p className="text-lg text-gray-400 mb-6">{product.priceStr}</p>
               
               <div className="prose prose-stone text-gray-400 font-light mb-8">
                  <p>{product.description}</p>
@@ -50,20 +50,20 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               <div className="mt-12 border-t border-gray-800 divide-y divide-gray-800">
                  <details className="group py-4">
                     <summary className="flex justify-between items-center cursor-pointer list-none text-sm font-medium text-white uppercase tracking-widest">
-                       Details & Care
-                       <span className="group-open:rotate-180 transition-transform">↓</span>
+                       {t("product_details_care")}
+                       <span className="group-open:rotate-180 transition-transform rtl-flip">↓</span>
                     </summary>
                     <div className="pt-4 text-gray-400 text-sm font-light leading-relaxed">
-                       {product.description} Hand wash cold. Do not bleach. Dry flat in shade. Avoid contact with rough surfaces.
+                       {product.description} {t("product_care_text")}
                     </div>
                  </details>
                  <details className="group py-4">
                     <summary className="flex justify-between items-center cursor-pointer list-none text-sm font-medium text-white uppercase tracking-widest">
-                       Shipping & Returns
-                       <span className="group-open:rotate-180 transition-transform">↓</span>
+                       {t("product_shipping")}
+                       <span className="group-open:rotate-180 transition-transform rtl-flip">↓</span>
                     </summary>
                     <div className="pt-4 text-gray-400 text-sm font-light leading-relaxed">
-                       Free standard shipping on all orders over $300. Returns accepted within 14 days of delivery. All tags must be attached.
+                       {t("product_shipping_text")}
                     </div>
                  </details>
               </div>

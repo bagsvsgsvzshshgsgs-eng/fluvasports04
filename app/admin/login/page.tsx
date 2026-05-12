@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
             <input 
               required
               type="email" 
-              placeholder="admin@fluvasport.com"
+              placeholder="admin@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border-b border-gray-800 px-0 py-4 text-sm focus:outline-none focus:border-orange-500 transition-all placeholder:text-gray-300"

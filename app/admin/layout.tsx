@@ -21,7 +21,9 @@ import {
   Layers,
   Star,
   MonitorPlay,
-  Eye
+  Eye,
+  ClipboardList,
+  GitFork
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -72,6 +74,7 @@ export default function AdminLayout({
         { label: "Orders", href: "/admin/orders", icon: <ShoppingCart size={18} /> },
         { label: "Products", href: "/admin/products", icon: <Package size={18} /> },
         { label: "Categories", href: "/admin/categories", icon: <Tags size={18} /> },
+        { label: "Category Tree", href: "/admin/categories/tree", icon: <GitFork size={18} /> },
         { label: "Customers", href: "/admin/customers", icon: <Users size={18} /> },
         { label: "Reviews", href: "/admin/reviews", icon: <Star size={18} /> },
       ]
@@ -89,11 +92,14 @@ export default function AdminLayout({
     {
       title: "System",
       items: [
-        { label: "Users", href: "/admin/users", icon: <Users size={18} /> },
-        { label: "Settings", href: "/admin/settings", icon: <Settings size={18} /> },
+        { label: "Activity Logs", href: "/admin/logs",  icon: <ClipboardList size={18} />, superOnly: true },
+        { label: "Users",    href: "/admin/users",    icon: <Users size={18} />,    superOnly: true },
+        { label: "Settings", href: "/admin/settings", icon: <Settings size={18} />, superOnly: false },
       ]
     }
   ];
+
+  const isSuperAdmin = adminUser?.role === 'SuperAdmin';
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a] font-sans text-gray-300">
@@ -123,7 +129,7 @@ export default function AdminLayout({
             <div key={idx} className="mb-8">
               <h3 className="px-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">{group.title}</h3>
               <ul className="space-y-1">
-                {group.items.map((item) => {
+                {group.items.filter(item => !('superOnly' in item) || !item.superOnly || isSuperAdmin).map((item) => {
                   const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/admin');
                   return (
                     <li key={item.href}>

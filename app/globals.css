@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
 
 @theme inline {
   --color-black: #000000;
@@ -83,3 +84,36 @@ body {
   position: relative !important;
 }
 
+/* ─── Language / RTL System ──────────────────────────── */
+
+/* Arabic font activated via JS class on <html> */
+html.font-arabic body,
+html.font-arabic * {
+  font-family: 'Cairo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Letter-spacing looks bad on Arabic — reset it */
+html[dir="rtl"] .tracking-widest,
+html[dir="rtl"] .tracking-wider,
+html[dir="rtl"] [class*="tracking-"] {
+  letter-spacing: 0 !important;
+}
+
+/* Flip directional icons (back arrows, chevrons, etc.) in RTL */
+html[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Logical margin/padding shorthands (work in both LTR & RTL automatically) */
+.ms-auto { margin-inline-start: auto; }
+.me-auto { margin-inline-end: auto; }
+.ps-4 { padding-inline-start: 1rem; }
+.pe-4 { padding-inline-end: 1rem; }
+
+/* Absolute positioning helpers that flip sides */
+html[dir="rtl"] .ltr-left-4  { right: 1rem !important; left: auto !important; }
+html[dir="rtl"] .ltr-right-4 { left: 1rem !important; right: auto !important; }
+
+/* Text alignment */
+html[dir="rtl"] .text-ltr-start { text-align: right; }
+html[dir="ltr"] .text-ltr-start { text-align: left; }

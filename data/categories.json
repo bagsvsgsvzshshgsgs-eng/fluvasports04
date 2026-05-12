@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "id": "cat_women",
+      "name": "Women",
+      "isFeatured": false,
+      "parentId": null,
+      "createdAt": "2026-05-03T10:00:00.000Z",
+      "updatedAt": "2026-05-03T10:00:00.000Z"
+    },
+    {
+      "id": "cat_men",
+      "name": "Men",
+      "isFeatured": false,
+      "parentId": null,
+      "createdAt": "2026-05-03T10:00:00.000Z",
+      "updatedAt": "2026-05-03T10:00:00.000Z"
+    },
+    {
+      "id": "cat_women_swimwear",
+      "name": "Swimwear & Apparel",
+      "isFeatured": true,
+      "parentId": "cat_women",
+      "createdAt": "2026-05-03T10:00:00.000Z",
+      "updatedAt": "2026-05-03T10:00:00.000Z"
+    },
+    {
+      "id": "cat_women_swimwear_bikinis",
+      "name": "Bikinis",
+      "isFeatured": true,
+      "parentId": "cat_women_swimwear",
+      "createdAt": "2026-05-03T10:00:00.000Z",
+      "updatedAt": "2026-05-03T11:04:28.036Z"
+    },
+    {
+      "id": "cat_women_swimwear_onepieces",
+      "name": "One Pieces",
+      "isFeatured": true,
+      "parentId": "cat_women_swimwear",
+      "createdAt": "2026-05-03T10:00:00.000Z",
+      "updatedAt": "2026-05-03T10:00:00.000Z"
+    }
+  ]
+}

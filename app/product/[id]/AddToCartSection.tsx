@@ -2,21 +2,28 @@
 
 import { useState } from "react";
 import { useStore } from "@/components/StoreContext";
-
+import { useLanguage } from "@/components/LanguageContext";
 import { Product } from "@/lib/data";
 
 export default function AddToCartSection({ product }: { product: Product }) {
-  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ["XS", "S", "M", "L", "XL"];
+  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ["8", "10", "12", "14", "16", "18"];
   const [selectedColor, setSelectedColor] = useState(product.colorNames[0]);
-  const [selectedSize, setSelectedSize] = useState(sizes.includes("M") ? "M" : sizes[0]);
+  const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const { addToCart, toggleWishlist, wishlist } = useStore();
+  const { t } = useLanguage();
   const isWishlisted = wishlist.includes(product.id);
+
+  const getDynamicPrice = () => {
+    if (["8", "10", "12"].includes(selectedSize)) return "EGP 650";
+    if (["14", "16", "18"].includes(selectedSize)) return "EGP 700";
+    return product.priceStr;
+  };
 
   const handleAddToCart = () => {
     addToCart({
       id: `${product.id}_${selectedColor}_${selectedSize}`,
       name: product.name,
-      price: product.priceStr,
+      price: getDynamicPrice(),
       image: product.image,
       quantity: 1,
       color: selectedColor,
@@ -26,9 +33,10 @@ export default function AddToCartSection({ product }: { product: Product }) {
 
   return (
     <>
+      <p className="text-lg text-gray-400 mb-6">{getDynamicPrice()}</p>
       <div className="mb-6">
         <div className="flex justify-between mb-2">
-          <span className="text-sm font-medium text-white">Color: <span className="text-gray-400">{selectedColor}</span></span>
+          <span className="text-sm font-medium text-white">{t("product_color")}: <span className="text-gray-400">{selectedColor}</span></span>
         </div>
         <div className="flex gap-3">
           {product.colorNames.map((colorName, idx) => (
@@ -45,17 +53,19 @@ export default function AddToCartSection({ product }: { product: Product }) {
 
       <div className="mb-8">
         <div className="flex justify-between mb-2">
-          <span className="text-sm font-medium text-white">Size</span>
-          <button className="text-xs text-gray-400 underline underline-offset-2">Size Guide</button>
+          <span className="text-sm font-medium text-white">{t("product_size")}</span>
+          <button className="text-xs text-gray-400 underline underline-offset-2">{t("product_size_guide")}</button>
         </div>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {sizes.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
-              className={`py-3 text-sm font-medium border transition-colors ${selectedSize === size ? 'border-orange-500 bg-orange-500 text-white' : 'border-gray-800 bg-black text-white hover:border-orange-500'}`}
+              className={`py-2 flex flex-col items-center justify-center text-sm font-medium border transition-colors ${selectedSize === size ? 'border-orange-500 bg-orange-500 text-white' : 'border-gray-800 bg-black text-white hover:border-orange-500'}`}
             >
-              {size}
+              <span>{size}</span>
+              {["8", "10", "12"].includes(size) && <span className="text-[10px] opacity-80 font-normal">650 EGP</span>}
+              {["14", "16", "18"].includes(size) && <span className="text-[10px] opacity-80 font-normal">700 EGP</span>}
             </button>
           ))}
         </div>
@@ -64,9 +74,10 @@ export default function AddToCartSection({ product }: { product: Product }) {
       <div className="flex gap-4">
         <button 
           onClick={handleAddToCart}
-          className="flex-1 bg-orange-500 text-white py-4 text-xs uppercase tracking-[0.2em] font-medium hover:bg-gray-800 transition-all shadow-md active:scale-95"
+          className="flex-1 bg-orange-500 text-white py-3 text-xs uppercase tracking-[0.1em] font-medium hover:bg-gray-800 transition-all shadow-md active:scale-95 flex flex-col items-center justify-center gap-0.5 sm:flex-row sm:gap-2 sm:py-4 sm:tracking-[0.2em]"
         >
-          Add to Bag
+          <span>{t("product_add_to_bag")}</span>
+          <span className="opacity-80 font-normal text-[10px] sm:text-xs">— {getDynamicPrice()}</span>
         </button>
         <button 
           onClick={() => toggleWishlist(product.id)}

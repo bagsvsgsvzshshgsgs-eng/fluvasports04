@@ -1,11 +1,13 @@
 "use client";
 
 import { useStore } from "./StoreContext";
+import { useLanguage } from "./LanguageContext";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function CartDrawer() {
   const { isCartOpen, setIsCartOpen, cartItems, removeFromCart, updateCartQuantity } = useStore();
+  const { t, isRTL } = useLanguage();
 
   if (!isCartOpen) return null;
 
@@ -25,11 +27,11 @@ export default function CartDrawer() {
       />
       
       {/* Drawer */}
-      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-black z-[101] shadow-2xl flex flex-col transform transition-transform duration-500 ease-in-out translate-x-0 border-l border-gray-800">
+      <div className={`fixed top-0 h-full w-full sm:w-[400px] bg-black z-[101] shadow-2xl flex flex-col transform transition-transform duration-500 ease-in-out translate-x-0 border-gray-800 ${isRTL ? 'left-0 border-r' : 'right-0 border-l'}`}>
         
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-800 bg-black">
-          <h2 className="text-lg font-serif text-white">Your Cart</h2>
+          <h2 className="text-lg font-serif text-white">{t("cart_title")}</h2>
           <button onClick={() => setIsCartOpen(false)} className="text-gray-400 hover:text-white transition-colors p-2">
             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -41,12 +43,12 @@ export default function CartDrawer() {
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <span className="text-gray-300 mb-4"><svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg></span>
-              <p className="text-gray-400 font-light">Your shopping bag is empty.</p>
+              <p className="text-gray-400 font-light">{t("cart_empty")}</p>
               <button 
                 onClick={() => setIsCartOpen(false)}
                 className="mt-8 border-b border-orange-500 text-sm uppercase tracking-widest text-white font-medium pb-1"
               >
-                Continue Shopping
+                {t("cart_continue_shopping")}
               </button>
             </div>
           ) : (
@@ -63,7 +65,7 @@ export default function CartDrawer() {
                       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </div>
-                  <p className="text-xs text-gray-400 mb-2 uppercase">{item.color} / {item.size}</p>
+                  <p className="text-xs text-gray-400 mb-2 uppercase">{item.color} {t("cart_size_color")} {item.size}</p>
                   
                   <div className="mt-auto flex justify-between items-end">
                     <div className="flex items-center border border-gray-800">
@@ -93,18 +95,18 @@ export default function CartDrawer() {
         {cartItems.length > 0 && (
           <div className="p-6 bg-black border-t border-gray-800">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-gray-400 font-light tracking-wide">Subtotal</span>
+              <span className="text-gray-400 font-light tracking-wide">{t("cart_subtotal")}</span>
               <span className="text-lg font-medium text-white">EGP {subtotal}</span>
             </div>
             <p className="text-xs text-gray-400 mb-6 font-light">
-              Taxes and shipping calculated at checkout.
+              {t("cart_taxes_note")}
             </p>
             <Link 
               href="/checkout"
               onClick={() => setIsCartOpen(false)}
               className="w-full bg-orange-500 text-white py-4 text-sm uppercase tracking-widest hover:bg-gray-800 shadow-md luxury-transition text-center hover-lift block"
             >
-              Checkout
+              {t("cart_checkout")}
             </Link>
           </div>
         )}

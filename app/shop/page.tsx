@@ -7,11 +7,13 @@ import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useStore } from "@/components/StoreContext";
+import { useLanguage } from "@/components/LanguageContext";
 import ProductCard from "@/components/ProductCard";
 
 // The core shop content that uses useSearchParams
 function ShopContent() {
   const { products } = useStore();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get("filter") || "All";
   
@@ -66,7 +68,12 @@ function ShopContent() {
 
     // Filter by Specific Category if selected
     if (activeCategory !== "All") {
-      result = result.filter((p) => p.category === activeCategory);
+      if (activeCategory === "Women") {
+        const womenCats = ["Bikinis", "One Pieces", "Resortwear", "Kaftans", "Cover-Ups", "Sarongs"];
+        result = result.filter((p) => womenCats.includes(p.category));
+      } else {
+        result = result.filter((p) => p.category === activeCategory);
+      }
     }
 
     // Sorting
@@ -90,7 +97,7 @@ function ShopContent() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-gray-500 mb-4 block">The Collection</span>
           <h1 className="text-4xl md:text-6xl font-serif text-white mb-6 tracking-tight">Poolside Luxury</h1>
           <p className="text-gray-400 font-light max-w-2xl mx-auto text-balance leading-relaxed">
-            Curated pieces for elevated summer living. From impeccably tailored swimwear to lifestyle accessories designed for uncompromising elegance on the Riviera and beyond.
+            Curated pieces for elevated summer living.
           </p>
         </div>
       </section>
@@ -150,10 +157,10 @@ function ShopContent() {
            
            {/* Active Filters Bar */}
            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span className="text-xs text-gray-500 uppercase tracking-widest">{filteredProducts.length} Items</span>
+              <span className="text-xs text-gray-500 uppercase tracking-widest">{filteredProducts.length} {t("shop_items")}</span>
               {activeGroup !== "All" && (
                 <span className="flex items-center gap-2 bg-black border border-gray-800 px-3 py-1.5 text-xs text-gray-400 shadow-sm">
-                  Group: {activeGroup}
+                  {activeGroup}
                   <button onClick={() => setActiveGroup("All")} className="hover:text-white">×</button>
                 </span>
               )}
@@ -164,8 +171,8 @@ function ShopContent() {
                 </span>
               )}
               {(activeGroup !== "All" || activeCategory !== "All") && (
-                <button onClick={() => { setActiveGroup("All"); setActiveCategory("All"); }} className="text-xs text-gray-500 hover:text-white underline underline-offset-4 pl-2">
-                  Clear All
+                <button onClick={() => { setActiveGroup("All"); setActiveCategory("All"); }} className="text-xs text-gray-500 hover:text-white underline underline-offset-4 ps-2">
+                  {t("shop_clear_all")}
                 </button>
               )}
            </div>
@@ -173,7 +180,7 @@ function ShopContent() {
            {/* Grid with Interspersed Banners */}
            {filteredProducts.length === 0 ? (
               <div className="py-24 text-center">
-                 <p className="text-gray-500 italic">No products match your current filters.</p>
+                 <p className="text-gray-500 italic">{t("shop_no_products")}</p>
               </div>
            ) : (
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
