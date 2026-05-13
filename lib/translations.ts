@@ -80,18 +80,12 @@ export const translations = {
     view_all_bestsellers: "View All Best Sellers",
 
     // Navbar Categories
-    nav_women: "Women",
-    nav_men: "Men",
-    nav_kids: "Kids",
-    nav_equipment: "Equipment",
     nav_bundle_deals: "Bundle Deals",
-    nav_sale: "Sale",
     nav_contact_us: "Contact Us",
     nav_swimwear_apparel: "Swimwear & Apparel",
     nav_bikinis: "Bikinis",
     nav_one_pieces: "One Pieces",
     nav_collections: "Collections",
-    nav_view_all: "View All",
     nav_shop: "Shop",
 
     // Cart
@@ -236,18 +230,12 @@ export const translations = {
     view_all_bestsellers: "عرض كل الأكثر طلباً",
 
     // Navbar Categories
-    nav_women: "نساء",
-    nav_men: "رجال",
-    nav_kids: "أطفال",
-    nav_equipment: "معدات",
     nav_bundle_deals: "عروض الباقات",
-    nav_sale: "تخفيضات",
     nav_contact_us: "تواصل معنا",
     nav_swimwear_apparel: "ملابس السباحة والأزياء",
     nav_bikinis: "بكيني",
     nav_one_pieces: "قطعة واحدة",
     nav_collections: "التشكيلات",
-    nav_view_all: "عرض الكل",
     nav_shop: "تسوق",
 
     // Cart
