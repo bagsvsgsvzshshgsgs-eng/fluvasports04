@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import dbConnect from '@/lib/mongoose';
 import Product from '@/lib/models/Product';
 import { allProducts } from '@/lib/data';
