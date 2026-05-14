@@ -670,8 +670,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const saved = await res.json();
         setOrders(prev => [saved, ...prev]);
         addLog(`New order placed: ${saved.id} by ${saved.customerName}`, 'order');
+        return true;
       }
-    } catch (e) { console.error(e); }
+      return false;
+    } catch (e) { 
+      console.error(e);
+      return false;
+    }
   };
   const updateOrderStatus = async (id: string, status: Order["status"]) => {
     try {

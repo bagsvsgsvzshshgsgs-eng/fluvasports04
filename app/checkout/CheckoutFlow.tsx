@@ -43,9 +43,14 @@ export default function CheckoutFlow() {
       date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })
     };
     
-    addOrder(newOrder);
-    clearCart();
-    router.push("/checkout/success");
+    const success = await addOrder(newOrder);
+    if (success) {
+      clearCart();
+      router.push("/checkout/success");
+    } else {
+      alert("Failed to save order. Please try again or contact support.");
+      setIsSubmitting(false);
+    }
   };
 
 

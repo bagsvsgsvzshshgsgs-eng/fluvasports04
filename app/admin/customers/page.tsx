@@ -83,8 +83,8 @@ export default function AdminCustomers() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
           { label: "Total Customers", value: customers.length.toString(), icon: "👥" },
-          { label: "Total Revenue",   value: `$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: "💰" },
-          { label: "Avg. Order Value", value: `$${avgOrderValue.toFixed(2)}`, icon: "🧾" },
+          { label: "Total Revenue",   value: `EGP ${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: "💰" },
+          { label: "Avg. Order Value", value: `EGP ${avgOrderValue.toFixed(2)}`, icon: "🧾" },
         ].map((stat, i) => (
           <div key={i} className="bg-black border border-gray-800 shadow-sm p-6">
             <div className="flex justify-between items-start mb-4">
@@ -169,7 +169,7 @@ export default function AdminCustomers() {
                         {customer.orderCount}
                       </td>
                       <td className="px-6 py-4 font-semibold text-white">
-                        ${customer.totalSpent.toFixed(2)}
+                        EGP {customer.totalSpent.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 text-gray-400">
                         {customer.lastOrderDate}
