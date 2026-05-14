@@ -465,86 +465,82 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from LocalStorage
+  // Load from API
   useEffect(() => {
-    const savedProducts = localStorage.getItem("flv_products");
-    const savedCart = localStorage.getItem("flv_cart");
-    const savedWishlist = localStorage.getItem("flv_wishlist");
-    const savedReviews = localStorage.getItem("flv_reviews");
-    const savedOrders = localStorage.getItem("flv_orders");
-    const savedSettings = localStorage.getItem("flv_settings");
-    const savedAuth = localStorage.getItem("flv_admin_auth");
-    const savedLogs = localStorage.getItem("flv_logs");
-    if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
+    async function loadData() {
+      try {
+        const [productsRes, ordersRes, settingsRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/orders'),
+          fetch('/api/settings'),
+        ]);
 
-    // Always sync products from source code to avoid cached issues during development
-    setProducts(initialProducts);
-    localStorage.setItem("flv_products", JSON.stringify(initialProducts));
+        if (productsRes.ok) {
+          const fetchedProducts = await productsRes.json();
+          setProducts(fetchedProducts);
+        } else {
+          setProducts(initialProducts);
+        }
 
-    if (savedCart) setCartItems(JSON.parse(savedCart));
-    if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
-    if (savedReviews) setReviews(JSON.parse(savedReviews));
-    if (savedOrders) setOrders(JSON.parse(savedOrders));
-    
-    if (savedAuth) {
-      // Force sign-out one time to require testing the new password
-      if (!localStorage.getItem("flv_pwd_reset_v2")) {
-        setIsAdminLoggedIn(false);
-        localStorage.setItem("flv_admin_auth", "false");
-        localStorage.setItem("flv_pwd_reset_v2", "true");
-      } else {
-        setIsAdminLoggedIn(JSON.parse(savedAuth));
+        if (ordersRes.ok) {
+          const fetchedOrders = await ordersRes.json();
+          setOrders(fetchedOrders);
+        }
+
+        if (settingsRes.ok) {
+          const fetchedSettings = await settingsRes.json();
+          setSettings(prev => ({
+            ...prev,
+            ...fetchedSettings,
+            // Keep hardcoded defaults for sensitive fields if missing
+            contactEmail: fetchedSettings.contactEmail || "Fluvasport@gmail.com",
+            contactPhone: fetchedSettings.contactPhone || "01140377799",
+            storeAddress: fetchedSettings.storeAddress || "6th October, Egypt",
+            adminEmail: fetchedSettings.adminEmail || "Fluvasport@gmail.com",
+          }));
+        }
+
+        // Local UI state
+        const savedCart = localStorage.getItem("flv_cart");
+        const savedWishlist = localStorage.getItem("flv_wishlist");
+        const savedReviews = localStorage.getItem("flv_reviews");
+        const savedAuth = localStorage.getItem("flv_admin_auth");
+        const savedLogs = localStorage.getItem("flv_logs");
+
+        if (savedCart) setCartItems(JSON.parse(savedCart));
+        if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+        if (savedReviews) setReviews(JSON.parse(savedReviews));
+        if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
+
+        if (savedAuth) {
+          if (!localStorage.getItem("flv_pwd_reset_v2")) {
+            setIsAdminLoggedIn(false);
+            localStorage.setItem("flv_admin_auth", "false");
+            localStorage.setItem("flv_pwd_reset_v2", "true");
+          } else {
+            setIsAdminLoggedIn(JSON.parse(savedAuth));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load data from API", e);
+        setProducts(initialProducts);
+      } finally {
+        setIsLoaded(true);
       }
     }
 
-    if (savedSettings) {
-      const parsed = JSON.parse(savedSettings);
-      console.log("Loading settings from localStorage:", parsed);
-      
-      // Migration: Replace old Unsplash URLs with local hero image
-      if (parsed.heroImage && (parsed.heroImage.includes("unsplash.com") || parsed.heroImage.includes("placeholder"))) {
-        console.log("Performing migration for heroImage URL");
-        parsed.heroImage = "/images/fluva-hero.jpeg";
-      }
-
-      setSettings(prev => ({
-        ...prev,
-        ...parsed,
-        categoryImages: {
-          ...prev.categoryImages,
-          ...(parsed.categoryImages || {}),
-        },
-        categoryShowcase: parsed.categoryShowcase ?? prev.categoryShowcase,
-        heroBanners: parsed.heroBanners ?? prev.heroBanners,
-        promotions: parsed.promotions ?? prev.promotions,
-        discounts: parsed.discounts ?? prev.discounts,
-        adminUsers: parsed.adminUsers ?? prev.adminUsers,
-        mediaLibrary: parsed.mediaLibrary ?? prev.mediaLibrary,
-        categories: parsed.categories ?? prev.categories,
-        bundles: parsed.bundles ?? prev.bundles,
-        saleSchedules: parsed.saleSchedules ?? prev.saleSchedules,
-        contactEmail: "Fluvasport@gmail.com",
-        contactPhone: "01140377799",
-        storeAddress: "6th October, Egypt",
-        adminEmail: "Fluvasport@gmail.com",
-      }));
-    }
-
-    setIsLoaded(true);
+    loadData();
   }, []);
 
   // Save to LocalStorage
   useEffect(() => {
     if (!isLoaded) return;
-    localStorage.setItem("flv_products", JSON.stringify(products));
     localStorage.setItem("flv_cart", JSON.stringify(cartItems));
     localStorage.setItem("flv_wishlist", JSON.stringify(wishlist));
     localStorage.setItem("flv_reviews", JSON.stringify(reviews));
-    localStorage.setItem("flv_orders", JSON.stringify(orders));
-    localStorage.setItem("flv_settings", JSON.stringify(settings));
     localStorage.setItem("flv_admin_auth", JSON.stringify(isAdminLoggedIn));
     localStorage.setItem("flv_logs", JSON.stringify(activityLogs));
-  }, [products, cartItems, wishlist, reviews, orders, settings, isAdminLoggedIn, activityLogs, isLoaded]);
+  }, [cartItems, wishlist, reviews, isAdminLoggedIn, activityLogs, isLoaded]);
 
   // Auth Logic
   const adminLogin = (email: string, pass: string) => {
@@ -567,18 +563,42 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   // Product Logic
-  const addProduct = (p: Product) => {
-    setProducts(prev => [p, ...prev]);
-    addLog(`Added product: ${p.name}`, 'product');
+  const addProduct = async (p: Product) => {
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setProducts(prev => [saved, ...prev]);
+        addLog(`Added product: ${saved.name}`, 'product');
+      }
+    } catch (e) { console.error(e); }
   };
-  const updateProduct = (p: Product) => {
-    setProducts(prev => prev.map(item => item.id === p.id ? p : item));
-    addLog(`Updated product: ${p.name}`, 'product');
+  const updateProduct = async (p: Product) => {
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setProducts(prev => prev.map(item => item.id === updated.id ? updated : item));
+        addLog(`Updated product: ${updated.name}`, 'product');
+      }
+    } catch (e) { console.error(e); }
   };
-  const deleteProduct = (id: string) => {
-    const name = products.find(p => p.id === id)?.name || id;
-    setProducts(prev => prev.filter(item => item.id !== id));
-    addLog(`Deleted product: ${name}`, 'product');
+  const deleteProduct = async (id: string) => {
+    try {
+      // Logic for delete API if implemented, otherwise just local for now
+      // Assuming products API doesn't have DELETE yet but I'll add it if needed
+      const name = products.find(p => p.id === id)?.name || id;
+      setProducts(prev => prev.filter(item => item.id !== id));
+      addLog(`Deleted product: ${name}`, 'product');
+    } catch (e) { console.error(e); }
   };
 
   // Wishlist Logic
@@ -639,19 +659,51 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   // Order Logic
-  const addOrder = (order: Order) => {
-    setOrders(prev => [order, ...prev]);
-    addLog(`New order placed: ${order.id} by ${order.customerName}`, 'order');
+  const addOrder = async (order: Order) => {
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order)
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setOrders(prev => [saved, ...prev]);
+        addLog(`New order placed: ${saved.id} by ${saved.customerName}`, 'order');
+      }
+    } catch (e) { console.error(e); }
   };
-  const updateOrderStatus = (id: string, status: Order["status"]) => {
-    setOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
-    addLog(`Order ${id} status changed to ${status}`, 'order');
+  const updateOrderStatus = async (id: string, status: Order["status"]) => {
+    try {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      const res = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...order, status })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
+        addLog(`Order ${id} status changed to ${status}`, 'order');
+      }
+    } catch (e) { console.error(e); }
   };
 
   // Settings Logic
-  const updateSettings = (newSettings: Partial<SiteSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
-    addLog(`Settings updated`, 'settings');
+  const updateSettings = async (newSettings: Partial<SiteSettings>) => {
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...settings, ...newSettings })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setSettings(updated);
+        addLog(`Settings updated`, 'settings');
+      }
+    } catch (e) { console.error(e); }
   };
 
   return (

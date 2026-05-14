@@ -1,53 +1,60 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import dbConnect from '@/lib/mongoose';
+import Product from '@/lib/models/Product';
 import { allProducts } from '@/lib/data';
 
 export async function GET() {
-  const data = db.read();
-  
-  // Seed initial products if empty
-  if (data.products.length === 0 && allProducts.length > 0) {
-    data.products = allProducts;
-    db.write(data);
+  try {
+    await dbConnect();
+    const products = await Product.find({});
+    
+    // Seed initial products if empty
+    if (products.length === 0 && allProducts.length > 0) {
+      await Product.insertMany(allProducts);
+      const seededProducts = await Product.find({});
+      return NextResponse.json(seededProducts);
+    }
+    
+    return NextResponse.json(products);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
-  
-  return NextResponse.json(data.products);
 }
 
 export async function POST(request: Request) {
   try {
+    await dbConnect();
     const body = await request.json();
-    const data = db.read();
     
-    const newProduct = {
+    const newProduct = new Product({
       ...body,
       id: body.id || `prod_${Date.now()}`,
-    };
+    });
     
-    data.products.unshift(newProduct);
-    db.write(data);
-    
+    await newProduct.save();
     return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ error: "Failed to create product", details: error.message }, { status: 500 });
   }
 }
 
 export async function PUT(request: Request) {
   try {
+    await dbConnect();
     const body = await request.json();
-    const data = db.read();
     
-    const index = data.products.findIndex(p => p.id === body.id);
-    if (index === -1) {
+    const updatedProduct = await Product.findOneAndUpdate(
+      { id: body.id },
+      body,
+      { new: true }
+    );
+    
+    if (!updatedProduct) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
     
-    data.products[index] = body;
-    db.write(data);
-    
-    return NextResponse.json(body);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    return NextResponse.json(updatedProduct);
+  } catch (error: any) {
+    return NextResponse.json({ error: "Failed to update product", details: error.message }, { status: 500 });
   }
 }

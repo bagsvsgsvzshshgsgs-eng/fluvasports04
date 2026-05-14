@@ -1,40 +1,30 @@
 import { NextResponse } from 'next/server';
-import { db, Category } from '@/lib/db';
-
-function buildTree(categories: Category[], parentId: string | null = null): any[] {
-  return categories
-    .filter(cat => cat.parentId === parentId)
-    .map(cat => ({
-      ...cat,
-      children: buildTree(categories, cat.id)
-    }));
-}
+import dbConnect from '@/lib/mongoose';
+import Category from '@/lib/models/Category';
 
 export async function GET() {
-  const data = db.read();
-  const tree = buildTree(data.categories);
-  return NextResponse.json(tree);
+  try {
+    await dbConnect();
+    const categories = await Category.find({});
+    return NextResponse.json(categories);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
   try {
+    await dbConnect();
     const body = await request.json();
-    const data = db.read();
     
-    const newCategory: Category = {
-      id: `cat_${Date.now()}`,
-      name: body.name || 'New Category',
-      isFeatured: body.isFeatured || false,
-      parentId: body.parentId || null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const newCategory = new Category({
+      ...body,
+      id: body.id || `cat_${Date.now()}`,
+    });
     
-    data.categories.push(newCategory);
-    db.write(data);
-    
+    await newCategory.save();
     return NextResponse.json(newCategory, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ error: "Failed to create category", details: error.message }, { status: 500 });
   }
 }
