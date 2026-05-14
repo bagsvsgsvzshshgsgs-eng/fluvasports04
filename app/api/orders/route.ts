@@ -8,8 +8,8 @@ export async function GET() {
     await dbConnect();
     const orders = await Order.find({}).sort({ createdAt: -1 });
     return NextResponse.json(orders);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ error: "Failed to fetch orders", details: error.message }, { status: 500 });
   }
 }
 

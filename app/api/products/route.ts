@@ -7,18 +7,19 @@ import { allProducts } from '@/lib/data';
 export async function GET() {
   try {
     await dbConnect();
-    const products = await Product.find({});
+    let products = await Product.find({});
     
-    // Seed initial products if empty
-    if (products.length === 0 && allProducts.length > 0) {
+    // Auto-seed if empty
+    if (products.length === 0) {
+      console.log("Seeding products to MongoDB...");
       await Product.insertMany(allProducts);
-      const seededProducts = await Product.find({});
-      return NextResponse.json(seededProducts);
+      products = await Product.find({});
     }
     
     return NextResponse.json(products);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+  } catch (error: any) {
+    console.error("MongoDB Products Error:", error);
+    return NextResponse.json({ error: "Failed to fetch products", details: error.message }, { status: 500 });
   }
 }
 
