@@ -213,7 +213,7 @@ type StoreContextType = {
 
   // Orders
   orders: Order[];
-  addOrder: (order: Order) => void;
+  addOrder: (order: Order) => Promise<{ success: boolean; error?: string }>;
   updateOrderStatus: (id: string, status: Order["status"]) => void;
 
   // Settings
@@ -659,16 +659,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order)
       });
+      const data = await res.json();
       if (res.ok) {
-        const saved = await res.json();
-        setOrders(prev => [saved, ...prev]);
-        addLog(`New order placed: ${saved.id} by ${saved.customerName}`, 'order');
-        return true;
+        setOrders(prev => [data, ...prev]);
+        addLog(`New order placed: ${data.id} by ${data.customerName}`, 'order');
+        return { success: true };
       }
-      return false;
-    } catch (e) { 
+      return { success: false, error: data.details || data.error || "Unknown error" };
+    } catch (e: any) { 
       console.error(e);
-      return false;
+      return { success: false, error: e.message };
     }
   };
   const updateOrderStatus = async (id: string, status: Order["status"]) => {
