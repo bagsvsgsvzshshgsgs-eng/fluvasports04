@@ -586,11 +586,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
   const deleteProduct = async (id: string) => {
     try {
-      // Logic for delete API if implemented, otherwise just local for now
-      // Assuming products API doesn't have DELETE yet but I'll add it if needed
-      const name = products.find(p => p.id === id)?.name || id;
-      setProducts(prev => prev.filter(item => item.id !== id));
-      addLog(`Deleted product: ${name}`, 'product');
+      const res = await fetch(`/api/products/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        const name = products.find(p => p.id === id)?.name || id;
+        setProducts(prev => prev.filter(item => item.id !== id));
+        addLog(`Deleted product: ${name}`, 'product');
+      }
     } catch (e) { console.error(e); }
   };
 
