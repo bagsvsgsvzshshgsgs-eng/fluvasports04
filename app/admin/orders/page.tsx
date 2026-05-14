@@ -73,6 +73,7 @@ export default function AdminOrders() {
               <tr>
                 <th className="px-6 py-4 font-medium">Order ID</th>
                 <th className="px-6 py-4 font-medium">Customer</th>
+                <th className="px-6 py-4 font-medium">Items</th>
                 <th className="px-6 py-4 font-medium">Date</th>
                 <th className="px-6 py-4 font-medium">Total</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -94,6 +95,16 @@ export default function AdminOrders() {
                       <div className="flex flex-col">
                         <span className="font-medium text-white group-hover:text-orange-500 transition-colors">{order.customerName}</span>
                         <span className="text-xs text-gray-500">{order.email}</span>
+                        {order.phone && <span className="text-xs text-gray-500">{order.phone}</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1 max-w-[200px]">
+                        {order.items?.map((item: any, idx: number) => (
+                          <div key={idx} className="text-xs text-gray-400 truncate">
+                            {item.quantity}x {item.name} ({item.size})
+                          </div>
+                        ))}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-500">{order.date}</td>

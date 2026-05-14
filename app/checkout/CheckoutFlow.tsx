@@ -15,6 +15,7 @@ export default function CheckoutFlow() {
 
   // Form states (simplified for now)
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
@@ -35,6 +36,7 @@ export default function CheckoutFlow() {
       id: `FLV-${Math.floor(Math.random() * 90000) + 10000}-${Math.floor(Math.random() * 9000) + 1000}`,
       customerName: `${firstName} ${lastName}`,
       email: email,
+      phone: phone,
       items: [...cartItems],
       total: subtotal,
       status: "Processing" as const,
@@ -70,6 +72,13 @@ export default function CheckoutFlow() {
             placeholder={t("checkout_email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-black border border-gray-800 px-4 py-3.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors mb-4"
+          />
+          <input
+            type="tel"
+            placeholder={t("checkout_phone")}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             className="w-full bg-black border border-gray-800 px-4 py-3.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors mb-4"
           />
           <label className="flex items-center gap-3 cursor-pointer">
@@ -112,7 +121,7 @@ export default function CheckoutFlow() {
 
         <button 
           onClick={handlePayNow}
-          disabled={isSubmitting || cartItems.length === 0}
+          disabled={isSubmitting || cartItems.length === 0 || !phone.trim() || !firstName.trim()}
           className="w-full bg-orange-500 text-black py-4 text-sm uppercase tracking-widest hover:bg-orange-600 shadow-md transition-colors text-center mt-4 disabled:bg-gray-700 disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
 

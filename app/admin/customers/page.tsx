@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 type CustomerSummary = {
   email: string;
   name: string;
+  phone?: string;
   totalSpent: number;
   orderCount: number;
   lastOrderDate: string;
@@ -24,6 +25,7 @@ export default function AdminCustomers() {
         map[order.email] = {
           email: order.email,
           name: order.customerName,
+          phone: order.phone,
           totalSpent: 0,
           orderCount: 0,
           lastOrderDate: order.date,
@@ -149,6 +151,11 @@ export default function AdminCustomers() {
                           <span className="text-[11px] text-gray-500 mt-0.5">
                             {customer.email}
                           </span>
+                          {customer.phone && (
+                            <span className="text-[11px] text-gray-500">
+                              {customer.phone}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">

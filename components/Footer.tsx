@@ -14,7 +14,7 @@ export default function Footer() {
   const whatsapp  = settings.socialLinks?.whatsapp  || "#";
   const email     = settings.contactEmail  || "hello@fluvasport.com";
   const phone     = settings.contactPhone  || "+20 100 000 0000";
-  const address   = settings.storeAddress  || "El Bashayer, Cairo, Egypt";
+  const address   = settings.storeAddress  || "6th October, Egypt";
   const siteName  = settings.siteName      || "Fluva Sport";
 
   return (

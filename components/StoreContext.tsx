@@ -17,6 +17,7 @@ type Order = {
   id: string;
   customerName: string;
   email: string;
+  phone: string;
   items: CartItem[];
   total: number;
   status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
@@ -441,7 +442,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     siteTagline: "Mediterranean Luxury Swimwear",
     contactEmail: "Fluvasport@gmail.com",
     contactPhone: "01140377799",
-    storeAddress: "El Bashayer, Cairo, Egypt",
+    storeAddress: "6th October, Egypt",
     logoUrl: "",
     // Social Media
     socialLinks: {
@@ -524,6 +525,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         saleSchedules: parsed.saleSchedules ?? prev.saleSchedules,
         contactEmail: "Fluvasport@gmail.com",
         contactPhone: "01140377799",
+        storeAddress: "6th October, Egypt",
         adminEmail: "Fluvasport@gmail.com",
       }));
     }
@@ -549,9 +551,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const validEmail = settings.adminEmail || "Fluvasport@gmail.com";
     const validPass = settings.adminPassword || "wateryclone123";
     
-    const user = settings.adminUsers?.find(u => u.email === email && u.status === 'Active');
+    const user = settings.adminUsers?.find(u => u.email.toLowerCase() === email.toLowerCase() && u.status === 'Active');
 
-    if ((email === validEmail && pass === validPass) || (user && pass === validPass)) {
+    if ((email.toLowerCase() === validEmail.toLowerCase() && pass === validPass) || (user && pass === validPass)) {
       setIsAdminLoggedIn(true);
       setAdminUser(user || settings.adminUsers?.[0] || null);
       return true;

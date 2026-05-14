@@ -98,12 +98,11 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-1">Address</h3>
                     <p className="text-gray-400 font-light text-sm leading-relaxed">
-                      El Bashayer<br />
                       First 6th of October<br />
                       Giza Governorate, Egypt
                     </p>
                     <a 
-                      href="https://maps.google.com/?q=El+Bashayer,+First+6th+of+October,+Giza+Governorate" 
+                      href="https://maps.google.com/?q=First+6th+of+October,+Giza+Governorate" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 mt-3 text-xs uppercase tracking-widest font-bold text-orange-500 hover:text-white transition-colors"
