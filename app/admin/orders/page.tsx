@@ -1,13 +1,24 @@
 "use client";
 
 import { useStore } from "@/components/StoreContext";
-import { Search, Filter } from "lucide-react";
-import { useState } from "react";
+import { Search, Filter, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function AdminOrders() {
-  const { orders, updateOrderStatus } = useStore();
+  const { orders, updateOrderStatus, refreshData } = useStore();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshData();
+    setIsRefreshing(false);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -34,6 +45,13 @@ export default function AdminOrders() {
           <h1 className="text-3xl font-serif text-white mb-2">Orders</h1>
           <p className="text-gray-400 text-sm">Manage customer orders and fulfillment status.</p>
         </div>
+        <button 
+          onClick={handleManualRefresh}
+          className="flex items-center gap-2 bg-gray-900 border border-gray-800 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
+        >
+          <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+          Refresh
+        </button>
       </header>
 
       <div className="bg-black border border-gray-900 rounded-xl shadow-sm overflow-hidden">

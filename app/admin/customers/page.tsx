@@ -1,7 +1,8 @@
 "use client";
 
 import { useStore } from "@/components/StoreContext";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { RefreshCw } from "lucide-react";
 
 type CustomerSummary = {
   email: string;
@@ -14,8 +15,19 @@ type CustomerSummary = {
 };
 
 export default function AdminCustomers() {
-  const { orders } = useStore();
+  const { orders, refreshData } = useStore();
   const [search, setSearch] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshData();
+    setIsRefreshing(false);
+  };
 
   const customers: CustomerSummary[] = useMemo(() => {
     const map: Record<string, CustomerSummary> = {};
@@ -77,6 +89,13 @@ export default function AdminCustomers() {
             Overview of all customers derived from order history.
           </p>
         </div>
+        <button 
+          onClick={handleManualRefresh}
+          className="flex items-center gap-2 bg-gray-900 border border-gray-800 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
+        >
+          <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+          Refresh
+        </button>
       </header>
 
       {/* Summary Stats */}

@@ -187,6 +187,7 @@ type StoreContextType = {
   addProduct: (product: Product) => void;
   updateProduct: (product: Product) => void;
   deleteProduct: (id: string) => void;
+  refreshData: () => Promise<void>;
   
   // Cart
   cartItems: CartItem[];
@@ -465,68 +466,60 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const refreshData = async () => {
+    try {
+      const [productsRes, ordersRes, settingsRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/orders'),
+        fetch('/api/settings'),
+      ]);
+
+      if (productsRes.ok) setProducts(await productsRes.json());
+      if (ordersRes.ok) setOrders(await ordersRes.json());
+      if (settingsRes.ok) {
+        const fetchedSettings = await settingsRes.json();
+        setSettings(prev => ({
+          ...prev,
+          ...fetchedSettings,
+          contactEmail: fetchedSettings.contactEmail || "Fluvasport@gmail.com",
+          contactPhone: fetchedSettings.contactPhone || "01140377799",
+          storeAddress: fetchedSettings.storeAddress || "6th October, Egypt",
+          adminEmail: fetchedSettings.adminEmail || "Fluvasport@gmail.com",
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to refresh data", e);
+    }
+  };
+
   // Load from API
   useEffect(() => {
     async function loadData() {
-      try {
-        const [productsRes, ordersRes, settingsRes] = await Promise.all([
-          fetch('/api/products'),
-          fetch('/api/orders'),
-          fetch('/api/settings'),
-        ]);
+      setIsLoaded(false);
+      await refreshData();
+      
+      // Local UI state
+      const savedCart = localStorage.getItem("flv_cart");
+      const savedWishlist = localStorage.getItem("flv_wishlist");
+      const savedReviews = localStorage.getItem("flv_reviews");
+      const savedAuth = localStorage.getItem("flv_admin_auth");
+      const savedLogs = localStorage.getItem("flv_logs");
 
-        if (productsRes.ok) {
-          const fetchedProducts = await productsRes.json();
-          setProducts(fetchedProducts);
+      if (savedCart) setCartItems(JSON.parse(savedCart));
+      if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+      if (savedReviews) setReviews(JSON.parse(savedReviews));
+      if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
+
+      if (savedAuth) {
+        if (!localStorage.getItem("flv_pwd_reset_v2")) {
+          setIsAdminLoggedIn(false);
+          localStorage.setItem("flv_admin_auth", "false");
+          localStorage.setItem("flv_pwd_reset_v2", "true");
         } else {
-          setProducts(initialProducts);
+          setIsAdminLoggedIn(JSON.parse(savedAuth));
         }
-
-        if (ordersRes.ok) {
-          const fetchedOrders = await ordersRes.json();
-          setOrders(fetchedOrders);
-        }
-
-        if (settingsRes.ok) {
-          const fetchedSettings = await settingsRes.json();
-          setSettings(prev => ({
-            ...prev,
-            ...fetchedSettings,
-            // Keep hardcoded defaults for sensitive fields if missing
-            contactEmail: fetchedSettings.contactEmail || "Fluvasport@gmail.com",
-            contactPhone: fetchedSettings.contactPhone || "01140377799",
-            storeAddress: fetchedSettings.storeAddress || "6th October, Egypt",
-            adminEmail: fetchedSettings.adminEmail || "Fluvasport@gmail.com",
-          }));
-        }
-
-        // Local UI state
-        const savedCart = localStorage.getItem("flv_cart");
-        const savedWishlist = localStorage.getItem("flv_wishlist");
-        const savedReviews = localStorage.getItem("flv_reviews");
-        const savedAuth = localStorage.getItem("flv_admin_auth");
-        const savedLogs = localStorage.getItem("flv_logs");
-
-        if (savedCart) setCartItems(JSON.parse(savedCart));
-        if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
-        if (savedReviews) setReviews(JSON.parse(savedReviews));
-        if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
-
-        if (savedAuth) {
-          if (!localStorage.getItem("flv_pwd_reset_v2")) {
-            setIsAdminLoggedIn(false);
-            localStorage.setItem("flv_admin_auth", "false");
-            localStorage.setItem("flv_pwd_reset_v2", "true");
-          } else {
-            setIsAdminLoggedIn(JSON.parse(savedAuth));
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load data from API", e);
-        setProducts(initialProducts);
-      } finally {
-        setIsLoaded(true);
       }
+      setIsLoaded(true);
     }
 
     loadData();
@@ -719,6 +712,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       reviews, addReview, updateReviewStatus, deleteReview,
       orders, addOrder, updateOrderStatus,
       settings, updateSettings,
+      refreshData,
       activityLogs, addLog, clearLogs,
       isAdminLoggedIn, adminUser, adminLogin, adminLogout
     }}>
