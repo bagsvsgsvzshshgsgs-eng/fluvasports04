@@ -20,6 +20,6 @@ const OrderSchema = new mongoose.Schema({
   status: { type: String, default: 'Processing' },
   date: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-});
+}, { strict: false });
 
 export default mongoose.models.Order || mongoose.model('Order', OrderSchema);
